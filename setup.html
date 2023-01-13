@@ -30,6 +30,7 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="css/highlighter.css">
 
     </head>
     <body>
@@ -95,12 +96,11 @@
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
                         </button>
-                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                        <button disabled id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
                             <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                         </ul>
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
@@ -143,96 +143,81 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="setup"><a class="header" href="#setup">Setup</a></h1>
-<ul>
-<li><a href="#creating-the-project">Creating the project</a></li>
-<li><a href="#creating-rust-libraries">Creating Rust Libraries</a></li>
-<li><a href="#makefile">Makefile</a></li>
-<li><a href="#install-android-and-ios-targets">Install Android and iOS Targets</a></li>
-<li><a href="#add-minimal-code-inside-core">Add Minimal Code Inside Core</a></li>
-</ul>
-<h2 id="creating-the-project"><a class="header" href="#creating-the-project">Creating the project</a></h2>
-<ol>
-<li>
-<p>We're not going to use <code>cargo new --lib</code> yet; instead, we're going to create an empty directory.</p>
-<pre><code class="language-shell">mkdir exa-lib
+<p>Let's get started and create our project. We will not use <code>cargo new --lib</code> yet; instead, we will make an empty directory and initialize git.</p>
+<pre><code class="language-bash">mkdir exa-lib
 cd exa-lib
+git init
 </code></pre>
-</li>
-<li>
-<p>Then inside of it, we want <code>Cargo.toml</code>, <code>.gitignore</code>, <code>Makefile</code>, and <code>glue/</code>.</p>
-<pre><code class="language-shell">touch Cargo.toml .gitignore Makefile
-mkdir glue
+<blockquote>
+<p><em>We initialized git that early, so when we create a new rust library, it doesn’t come with a version control system; if you want to create a lib without <code>vcs</code>, add <code>--vcs none</code> to your <code>cargo new</code> command.</em></p>
+</blockquote>
+<p>Each rust project (yes, we will create multiple rust projects) will be a member of our <a href="https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html">cargo's workspace.</a></p>
+<pre><code class="language-bash">touch Cargo.toml
 </code></pre>
-<p><code>Cargo.toml</code> will contain our rust workspace members, and inside <code>Makefile</code> we will put our commands.</p>
-</li>
-<li>
-<p>Add ignore patterns</p>
-<pre><code class="language-txt">debug/
-target/
-**/*.rs.bk
-*.pdb
-.DS_Store
-.idea/
-.fleet/
-.vscode/
-main.rs
-</code></pre>
-<p>I usually ignore <code>main.rs</code> for libs so I can keep it locally as a playground without pushing my draft code on the repo</p>
-</li>
-<li>
-<p>And finally, initialize git.</p>
-<pre><code class="language-shell">git init
-</code></pre>
-</li>
-</ol>
-<h2 id="creating-rust-libraries"><a class="header" href="#creating-rust-libraries">Creating Rust Libraries</a></h2>
-<p>Now we're going to create three rust libraries</p>
-<pre><code class="language-shell">cargo new --lib exa_core
+<p>We can now build our core library, iOS and Android glues.</p>
+<pre><code class="language-bash">cargo new --lib exa_core
 cargo new --lib glue/android
 cargo new --lib glue/ios
 </code></pre>
-<p>Then the rust analyzer will go mad, so let us add them to the workspace inside the <code>Cargo.toml</code> on the root directory.</p>
-<pre><code class="language-toml">[workspace]
+<p>The rust analyzer will go mad at us, so we should add them to our workspace.</p>
+<pre><code class="language-toml"># Cargo.toml
+[workspace]
 members = [
     &quot;exa_core&quot;,
     &quot;glue/android&quot;,
     &quot;glue/ios&quot;
 ]
 </code></pre>
-<h2 id="makefile"><a class="header" href="#makefile">Makefile</a></h2>
-<p>Inside it, we're going to add some commands to make our life easier for the setup and building.</p>
-<pre><code class="language-make">ios_targets = aarch64-apple-ios x86_64-apple-ios aarch64-apple-ios-sim
-android_targets = armv7-linux-androideabi i686-linux-android aarch64-linux-android x86_64-linux-android
-lib_name = exa
-android-setup:
-	@for target in ${android_targets} ; do \
-		rustup target add $$target ; \
-	done
-ios-setup:
-	cargo install cargo-lipo
-	@for target in ${ios_targets} ; do \
-		rustup target add $$target ; \
-	done
+<p>And add one of the most essential files to git, <code>.gitignore</code></p>
+<pre><code class="language-text">debug/
+target/
+Cargo.lock
+
+**/*.rs.bk
+
+*.pdb
+
+.DS_Store
+
+.idea/
+.fleet/
+.vscode/
+
+main.rs
 </code></pre>
-<p><em><strong>Note:</strong> Please make sure to use tabs rather than spaces, if we use spaces Makefile will throw this error: <code>Makefile:6: *** missing separator.  Stop.</code></em></p>
-<p>In other parts of this series, we will add more commands to this file.</p>
-<h2 id="install-android-and-ios-targets"><a class="header" href="#install-android-and-ios-targets">Install Android and iOS Targets</a></h2>
-<p>In the previous step, we added commands to setup both Android and iOS, so now let us run them</p>
-<pre><code class="language-shell">make android-setup
-make ios-setup
+<p>We are ignoring the <code>.lock</code> file since we’re building a library. And I also like to ignore <code>main.rs</code> when building a library, so it acts as my playground for drafting rust code, and indeed we don’t want that to be saved in the repo.</p>
+<p>And for our last file for this section, the <code>.editorconfig</code></p>
+<pre><code class="language-toml"># https://editorconfig.org
+
+root = true
+
+[*]
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[Makefile]
+indent_style = tab
+indent_size = 4
 </code></pre>
-<h2 id="add-minimal-code-inside-core"><a class="header" href="#add-minimal-code-inside-core">Add Minimal Code Inside Core</a></h2>
-<p>Inside <code>exa_core/src/lib.rs</code> replace the file's content with a simple greeting function</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub fn greet(person: &amp;str) -&gt; String {
-    format!(&quot;Hello {person}&quot;)
-}
-<span class="boring">}</span></code></pre></pre>
-<hr />
 <blockquote>
-<p>You can find the code for this article on GitHub <a href="https://github.com/Ghamza-Jd/exa-lib/tree/part-1-setup">Ghamza-Jd/exa-lib</a></p>
+<p><em>Remember to install the <a href="https://editorconfig.org/">EditorConfig</a> extension on your text editor.</em></p>
 </blockquote>
+<p>To make sure our <code>Makefile</code> won't start nagging about missing separators.</p>
+<p>And we’re ending this chapter by adding a small function in <code>src/exa_core/lib.rs</code> to greet someone.</p>
+<pre><code class="language-rust">pub fn greet(person: &amp;str) -&gt; String {
+    format!(&quot;Hello, {person}&quot;)
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn it_greets() {
+        let result = greet(&quot;World&quot;);
+        assert_eq!(result, &quot;Hello, World&quot;);
+    }
+}</code></pre>
 
                     </main>
 
@@ -296,6 +281,7 @@ make ios-setup
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
+        <script type="text/javascript" src="js/highlighter.js"></script>
 
 
     </body>

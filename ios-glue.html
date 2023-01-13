@@ -30,6 +30,7 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="css/highlighter.css">
 
     </head>
     <body>
@@ -95,12 +96,11 @@
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
                         </button>
-                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                        <button disabled id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
                             <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                         </ul>
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
@@ -190,7 +190,7 @@ cargo add -p ios --build cbindgen
 <h2 id="ios-glue-setup"><a class="header" href="#ios-glue-setup">iOS Glue Setup</a></h2>
 <h3 id="build-file"><a class="header" href="#build-file">Build File</a></h3>
 <p>Create <code>glue/ios/build.rs</code> and add to our bindings setup</p>
-<pre><pre class="playground"><code class="language-rust">extern crate cbindgen;
+<pre><code class="language-rust">extern crate cbindgen;
 use std::env;
 use cbindgen::Language::C;
 fn main() {
@@ -211,7 +211,7 @@ fn setup_cbindgen() {
             println!(&quot;Error: {}&quot;, err);
         }
     }
-}</code></pre></pre>
+}</code></pre>
 <p>Whenever we have a non-mangeled (has <code>#[no_mangle]</code> attribute), public, exported C function in our <code>lib.rs</code> or declared as a module there, the fuction signature is going to be added to <code>glue/ios/include/exa_native.h</code> on save.</p>
 <p>Create <code>glue/ios/include/module.modulemap</code> and add the proper info to export the headers</p>
 <pre><code class="language-modulemap">module Exa {
@@ -221,35 +221,24 @@ fn setup_cbindgen() {
 </code></pre>
 <h3 id="errors"><a class="header" href="#errors">Errors</a></h3>
 <p>Create <code>glue/ios/src/error.rs</code> that will contain our errors enum to be handled later on.</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>#[derive(Debug)]
+<pre><code class="language-rust">#[derive(Debug)]
 pub enum Error {
     InvalidUtf8,
     InvalidUint,
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <h3 id="prelude"><a class="header" href="#prelude">Prelude</a></h3>
 <p>Prelude is going to be imported in most of the files, so we want to make it as minimal as possibile.</p>
 <p>Inside of it we're going to make a shortcut for the <code>Result</code> type.</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub use crate::error::Error;
-pub type Result&lt;T&gt; = core::result::Result&lt;T, Error&gt;;
-<span class="boring">}</span></code></pre></pre>
+<pre><code class="language-rust">pub use crate::error::Error;
+pub type Result&lt;T&gt; = core::result::Result&lt;T, Error&gt;;</code></pre>
 <p>Now we can add both of them to <code>glue/ios/src/lib.rs</code></p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>mod error;
-mod prelude;
-<span class="boring">}</span></code></pre></pre>
+<pre><code class="language-rust">mod error;
+mod prelude;</code></pre>
 <p>This pattern is considered an idiomatic way in rust for handling errors.</p>
 <h3 id="ffi-helpers"><a class="header" href="#ffi-helpers">FFI Helpers</a></h3>
 <p>FFI stands for foriegn function interface, we will add helpers for converting to and from C types</p>
 <p>Create <code>glue/ios/src/ffi_helpers.rs</code></p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use crate::prelude::*;
+<pre><code class="language-rust">use crate::prelude::*;
 use libc::c_char;
 use std::ffi::{CStr, CString};
 pub unsafe fn to_rust_str&lt;'a&gt;(raw_ptr: *const c_char) -&gt; Result&lt;&amp;'a str&gt; {
@@ -263,20 +252,14 @@ pub fn to_c_str(s: &amp;str) -&gt; Result&lt;*mut i8&gt; {
         Ok(string) =&gt; Ok(string.into_raw()),
         Err(_) =&gt; Err(Error::InvalidUint),
     }
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>And finally import <code>ffi_helpers.rs</code> inside <code>lib.rs</code></p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>mod error;
+<pre><code class="language-rust">mod error;
 mod prelude;
-mod ffi_helpers;
-<span class="boring">}</span></code></pre></pre>
+mod ffi_helpers;</code></pre>
 <h3 id="glue"><a class="header" href="#glue">Glue</a></h3>
 <p>For the gluing part, we want to import <code>libc</code> and <code>exa_core</code> and with the help of <code>ffi_helpers</code> we can convert back and forth between C and Rust types.</p>
-<pre><pre class="playground"><code class="language-rust {hl_lines=[&quot;5-19&quot;] linenostart=1}"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>mod error;
+<pre><code class="language-rust {hl_lines=[&quot;5-19&quot;] linenostart=1}">mod error;
 mod ffi_helpers;
 mod prelude;
 use exa_core::greet;
@@ -291,8 +274,7 @@ pub unsafe extern &quot;C&quot; fn greet_person(name: *const c_char) -&gt; *mut 
         panic!(&quot;Failed to convert to char array&quot;);
     };
     name
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>The <code>#[no_mangle]</code> is an important part, so on build the function name is still the same.</p>
 <p>Now if you save, you should be able to see the <code>exa_native.h</code> has added a function.</p>
 <pre><code class="language-c">#include &lt;stdarg.h&gt;
@@ -308,33 +290,33 @@ android_targets = armv7-linux-androideabi i686-linux-android aarch64-linux-andro
 lib_name = exa
 framework_name = Exa
 android-setup:
-	@for target in ${android_targets} ; do \
-		rustup target add $$target ; \
-	done
+ @for target in ${android_targets} ; do \
+  rustup target add $$target ; \
+ done
 ios-setup:
-	cargo install cargo-lipo
-	@for target in ${ios_targets} ; do \
-		rustup target add $$target ; \
-	done
+ cargo install cargo-lipo
+ @for target in ${ios_targets} ; do \
+  rustup target add $$target ; \
+ done
 ios: ios-clean ios-build ios-framework
 ios-build:
-	@echo &quot;Building for iOS...&quot;
-	@for target in ${ios_targets} ; do \
-		cargo build -p ios --release --target $$target ; \
-	done
-	@lipo -create \
-		target/x86_64-apple-ios/release/lib${lib_name}.a \
-		target/aarch64-apple-ios-sim/release/lib${lib_name}.a \
-		-output target/lib${lib_name}_sim.a
+ @echo &quot;Building for iOS...&quot;
+ @for target in ${ios_targets} ; do \
+  cargo build -p ios --release --target $$target ; \
+ done
+ @lipo -create \
+  target/x86_64-apple-ios/release/lib${lib_name}.a \
+  target/aarch64-apple-ios-sim/release/lib${lib_name}.a \
+  -output target/lib${lib_name}_sim.a
 ios-framework:
-	@xcodebuild -create-xcframework \
-		-library target/lib${lib_name}_sim.a \
-		-headers glue/ios/include/ \
-		-library target/aarch64-apple-ios/release/lib${lib_name}.a \
-		-headers glue/ios/include/ \
-		-output target/${framework_name}.xcframework
+ @xcodebuild -create-xcframework \
+  -library target/lib${lib_name}_sim.a \
+  -headers glue/ios/include/ \
+  -library target/aarch64-apple-ios/release/lib${lib_name}.a \
+  -headers glue/ios/include/ \
+  -output target/${framework_name}.xcframework
 ios-clean:
-	@cd target &amp;&amp; rm -rf ${framework_name}.xcframework
+ @cd target &amp;&amp; rm -rf ${framework_name}.xcframework
 </code></pre>
 <p><em><strong>Note:</strong> Please make sure to use tabs rather than spaces, if we use spaces Makefile will throw this error: <code>*** missing separator.  Stop.</code></em></p>
 <p>And now run <code>make ios</code></p>
@@ -435,6 +417,7 @@ struct ContentView_Previews: PreviewProvider {
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
+        <script type="text/javascript" src="js/highlighter.js"></script>
 
 
     </body>
