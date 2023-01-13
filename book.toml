@@ -14,7 +14,7 @@ additional-css = ["css/highlighter.css"]
 google-analytics = "G-M9GYS9Z1XC"
 git-repository-url = "https://github.com/ghamza-rust/ghamza-rust.github.io"
 git-repository-icon = "fa-github"
-# preferred-dark-theme = "navy"
+preferred-dark-theme = "light"
 
 [output.html.playground]
 runnable = false
