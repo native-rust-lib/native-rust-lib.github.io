@@ -1,15 +1,11 @@
 # Introduction
 
-In this series, we will create a rust library and port it to different platforms, couldn't come up with a good name so I we're going to call it `libexa` (as Example Library).
+Rust is a modern systems programming language focusing on safety, speed, and concurrency. It accomplishes these goals by being memory safe without using garbage collection.
 
-<!-- To get the most out of this series you should be using macOS to build for iOS. If you're on windows or linux you can't build for iOS. -->
+It's a popular choice for designing systems with high-performance requirements, such as gaming engines, databases, or operating systems, and it's an ideal choice for creating a common module for several platforms, including web, iOS, and Android.
 
-To build for android and iOS, you should be on macOS. If you're using windows or linux, you can only build for android, but worth noting that some commands and setups might be different (for example, you might not have `make`, `python`, or `brew` on your machine).
+We will build a rust library in this series and port it to different platforms. We are calling it `libexa` (which stands for Example Library 🫣).
 
-You can use the development environment you're most comfortable with, but mine is [VSCode](https://code.visualstudio.com/) with these extensions:
+I strongly recommend [installing all of your Rust toolchains using rustup.][1]
 
-- [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
-- [Better TOML](https://marketplace.visualstudio.com/items?itemName=bungcip.better-toml)
-- [CodeLLDB](https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb)
-
-I also use [Fig](https://fig.io/) to get suggestions on the terminal.
+[1]: https://www.rust-lang.org/tools/install

@@ -197,33 +197,33 @@ android_targets = armv7-linux-androideabi i686-linux-android aarch64-linux-andro
 lib_name = exa
 framework_name = Exa
 android-setup:
-	@for target in ${android_targets} ; do \
-		rustup target add $$target ; \
-	done
+ @for target in ${android_targets} ; do \
+  rustup target add $$target ; \
+ done
 ios-setup:
-	cargo install cargo-lipo
-	@for target in ${ios_targets} ; do \
-		rustup target add $$target ; \
-	done
+ cargo install cargo-lipo
+ @for target in ${ios_targets} ; do \
+  rustup target add $$target ; \
+ done
 ios: ios-clean ios-build ios-framework
 ios-build:
-	@echo "Building for iOS..."
-	@for target in ${ios_targets} ; do \
-		cargo build -p ios --release --target $$target ; \
-	done
-	@lipo -create \
-		target/x86_64-apple-ios/release/lib${lib_name}.a \
-		target/aarch64-apple-ios-sim/release/lib${lib_name}.a \
-		-output target/lib${lib_name}_sim.a
+ @echo "Building for iOS..."
+ @for target in ${ios_targets} ; do \
+  cargo build -p ios --release --target $$target ; \
+ done
+ @lipo -create \
+  target/x86_64-apple-ios/release/lib${lib_name}.a \
+  target/aarch64-apple-ios-sim/release/lib${lib_name}.a \
+  -output target/lib${lib_name}_sim.a
 ios-framework:
-	@xcodebuild -create-xcframework \
-		-library target/lib${lib_name}_sim.a \
-		-headers glue/ios/include/ \
-		-library target/aarch64-apple-ios/release/lib${lib_name}.a \
-		-headers glue/ios/include/ \
-		-output target/${framework_name}.xcframework
+ @xcodebuild -create-xcframework \
+  -library target/lib${lib_name}_sim.a \
+  -headers glue/ios/include/ \
+  -library target/aarch64-apple-ios/release/lib${lib_name}.a \
+  -headers glue/ios/include/ \
+  -output target/${framework_name}.xcframework
 ios-clean:
-	@cd target && rm -rf ${framework_name}.xcframework
+ @cd target && rm -rf ${framework_name}.xcframework
 ```
 
 _**Note:** Please make sure to use tabs rather than spaces, if we use spaces Makefile will throw this error: `*** missing separator.  Stop.`_

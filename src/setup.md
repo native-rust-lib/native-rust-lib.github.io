@@ -1,64 +1,33 @@
 # Setup
 
-- [Creating the project](#creating-the-project)
-- [Creating Rust Libraries](#creating-rust-libraries)
-- [Makefile](#makefile)
-- [Install Android and iOS Targets](#install-android-and-ios-targets)
-- [Add Minimal Code Inside Core](#add-minimal-code-inside-core)
+Let's get started and create our project. We will not use `cargo new --lib` yet; instead, we will make an empty directory and initialize git.
 
-## Creating the project
+```bash
+mkdir exa-lib
+cd exa-lib
+git init
+```
 
-1. We're not going to use `cargo new --lib` yet; instead, we're going to create an empty directory.
+> *We initialized git that early, so when we create a new rust library, it doesn’t come with a version control system; if you want to create a lib without `vcs`, add `--vcs none` to your `cargo new` command.*
 
-    ```shell
-    mkdir exa-lib
-    cd exa-lib
-    ```
+Each rust project (yes, we will create multiple rust projects) will be a member of our [cargo's workspace.](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html)
 
-2. Then inside of it, we want `Cargo.toml`, `.gitignore`, `Makefile`, and `glue/`.
+```bash
+touch Cargo.toml
+```
 
-    ```shell
-    touch Cargo.toml .gitignore Makefile
-    mkdir glue
-    ```
+We can now build our core library, iOS and Android glues.
 
-    `Cargo.toml` will contain our rust workspace members, and inside `Makefile` we will put our commands.
-
-3. Add ignore patterns
-
-    ```txt
-    debug/
-    target/
-    **/*.rs.bk
-    *.pdb
-    .DS_Store
-    .idea/
-    .fleet/
-    .vscode/
-    main.rs
-    ```
-
-    I usually ignore `main.rs` for libs so I can keep it locally as a playground without pushing my draft code on the repo
-
-4. And finally, initialize git.
-
-    ```shell
-    git init
-    ```
-
-## Creating Rust Libraries
-
-Now we're going to create three rust libraries
-
-```shell
+```bash
 cargo new --lib exa_core
 cargo new --lib glue/android
 cargo new --lib glue/ios
 ```
 
-Then the rust analyzer will go mad, so let us add them to the workspace inside the `Cargo.toml` on the root directory.
+The rust analyzer will go mad at us, so we should add them to our workspace.
 
 ```toml
+# Cargo.toml
 [workspace]
 members = [
     "exa_core",
@@ -67,50 +36,63 @@ members = [
 ]
 ```
 
-## Makefile
+And add one of the most essential files to git, `.gitignore`
 
-Inside it, we're going to add some commands to make our life easier for the setup and building.
+```text
+debug/
+target/
+Cargo.lock
 
-```make
-ios_targets = aarch64-apple-ios x86_64-apple-ios aarch64-apple-ios-sim
-android_targets = armv7-linux-androideabi i686-linux-android aarch64-linux-android x86_64-linux-android
-lib_name = exa
-android-setup:
-	@for target in ${android_targets} ; do \
-		rustup target add $$target ; \
-	done
-ios-setup:
-	cargo install cargo-lipo
-	@for target in ${ios_targets} ; do \
-		rustup target add $$target ; \
-	done
+**/*.rs.bk
+
+*.pdb
+
+.DS_Store
+
+.idea/
+.fleet/
+.vscode/
+
+main.rs
 ```
 
-_**Note:** Please make sure to use tabs rather than spaces, if we use spaces Makefile will throw this error: `Makefile:6: *** missing separator.  Stop.`_
+We are ignoring the `.lock` file since we’re building a library. And I also like to ignore `main.rs` when building a library, so it acts as my playground for drafting rust code, and indeed we don’t want that to be saved in the repo.
 
-In other parts of this series, we will add more commands to this file.
+And for our last file for this section, the `.editorconfig`
 
-## Install Android and iOS Targets
+```toml
+# https://editorconfig.org
 
-In the previous step, we added commands to setup both Android and iOS, so now let us run them
+root = true
 
-```shell
-make android-setup
-make ios-setup
+[*]
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[Makefile]
+indent_style = tab
+indent_size = 4
 ```
 
-## Add Minimal Code Inside Core
+> *Remember to install the [EditorConfig](https://editorconfig.org/) extension on your text editor.*
 
-Inside `exa_core/src/lib.rs` replace the file's content with a simple greeting function
+To make sure our `Makefile` won't start nagging about missing separators.
+
+And we’re ending this chapter by adding a small function in `src/exa_core/lib.rs` to greet someone.
 
 ```rust
 pub fn greet(person: &str) -> String {
-    format!("Hello {person}")
+    format!("Hello, {person}")
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn it_greets() {
+        let result = greet("World");
+        assert_eq!(result, "Hello, World");
+    }
 }
 ```
-
----
-
-> You can find the code for this article on GitHub [Ghamza-Jd/exa-lib][1]
-
-[1]: https://github.com/Ghamza-Jd/exa-lib/tree/part-1-setup
