@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Introduction - Rust on Mobile</title>
+        <title>Setup Makefile - Rust on Mobile</title>
 
 
         <!-- Custom HTML head -->
@@ -90,7 +90,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html" class="active"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="setup.html"><strong aria-hidden="true">2.</strong> Setup</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="setup-makefile.html"><strong aria-hidden="true">2.1.</strong> Setup Makefile</a></li></ol></li><li class="chapter-item expanded "><a href="ios-glue.html"><strong aria-hidden="true">3.</strong> iOS Glue</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Android Glue</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> More Examples</div></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="setup.html"><strong aria-hidden="true">2.</strong> Setup</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="setup-makefile.html" class="active"><strong aria-hidden="true">2.1.</strong> Setup Makefile</a></li></ol></li><li class="chapter-item expanded "><a href="ios-glue.html"><strong aria-hidden="true">3.</strong> iOS Glue</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Android Glue</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> More Examples</div></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -151,36 +151,86 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="rust--on-mobile-"><a class="header" href="#rust--on-mobile-">Rust 🦀 on Mobile 📱</a></h1>
-<p>This small book describes how to use Rust and Mobile (android and iOS) together.</p>
-<h2 id="who-is-this-book-for"><a class="header" href="#who-is-this-book-for">Who is this book for?</a></h2>
-<p>This book is for anyone interested in compiling Rust to android or iOS for fast,
-reliable code on the mobile. You should know some Rust, and be familiar with
-Kotlin and Swift. You don't need to be an expert in any of them.</p>
-<h2 id="how-to-read-this-book"><a class="header" href="#how-to-read-this-book">How to read this book?</a></h2>
-<p>The book is written to be read from start to finish. You should follow
-along:writing, compiling, and running the tutorial's code yourself.</p>
-<p>We will build a rust library in this series and port it to different platforms.
-We are calling it <code>libexa</code> (which stands for Example Library 🫣).</p>
-<h2 id="low-level-control-with-high-level-ergonomics"><a class="header" href="#low-level-control-with-high-level-ergonomics">Low-Level Control with High-Level Ergonomics</a></h2>
-<p>Rust gives programmers low-level control and reliable performance. It is free
-from the non-deterministic garbage collection pauses that plague Kotlin/Swift.
-Programmers have control over indirection, monomorphization, and memory layout.</p>
-<h2 id="do-not-rewrite-everything"><a class="header" href="#do-not-rewrite-everything">Do <em>Not</em> Rewrite Everything</a></h2>
-<p>Existing code bases don't need to be thrown away. You can start by porting your
-most performance-sensitive Swift/Kotlin functions to Rust to gain immediate
-benefits. And you can even stop there if you want to.</p>
-<p>I strongly recommend <a href="https://www.rust-lang.org/tools/install">installing all of your Rust toolchains using rustup.</a></p>
+                        <h1 id="setup-makefile"><a class="header" href="#setup-makefile">Setup Makefile</a></h1>
+<p>In this section we are going to create <code>Makefile</code> that will contain our commands.</p>
+<pre><code class="language-bash">touch Makefile
+</code></pre>
+<p>We will start by adding android and iOS targets</p>
+<pre><code class="language-Makefile">ios_targets = aarch64-apple-ios \
+	x86_64-apple-ios \
+	aarch64-apple-ios-sim
+
+android_targets = armv7-linux-androideabi \
+	i686-linux-android \
+	aarch64-linux-android \
+	x86_64-linux-android
+</code></pre>
+<p>Now we can loop over those targets to do whatever we want, as a beginning we
+can add this targets to our tool chain under a setup command.</p>
+<pre><code class="language-Makefile [hl 10-18]">ios_targets = aarch64-apple-ios \
+	x86_64-apple-ios \
+	aarch64-apple-ios-sim
+
+android_targets = armv7-linux-androideabi \
+	i686-linux-android \
+	aarch64-linux-android \
+	x86_64-linux-android
+
+android-setup:
+	@for target in ${android_targets} ; do \
+        rustup target add $$target ; \
+    done
+
+ios-setup:
+	@for target in ${ios_targets} ; do \
+        rustup target add $$target ; \
+    done
+</code></pre>
+<p>For iOS we also want to install <code>cargo-lipo</code>, which automatically creates a
+universal library for use with your iOS application.</p>
+<pre><code class="language-Makefile [hl 7]">android-setup:
+	@for target in ${android_targets} ; do \
+        rustup target add $$target ; \
+    done
+
+ios-setup:
+	cargo install cargo-lipo
+
+	@for target in ${ios_targets} ; do \
+        rustup target add $$target ; \
+    done
+</code></pre>
+<p>Now to set our iOS and android from rust side we run simple</p>
+<pre><code class="language-bash">make ios-setup
+make android-setup
+</code></pre>
 <blockquote>
-<p><em>The code of this tutorial is available on <a href="https://github.com/Ghamza-Jd/exa-lib">Ghamza-Jd/exa-lib</a></em></p>
+<p><strong>📄 Note:</strong> <em>We should use hard tabs in our <code>Makefile</code>, spaces will result in
+&quot;missing separator&quot;</em></p>
 </blockquote>
+<p>To make sure we use hard tabs we can add this rule in our <code>.editorconfig</code>.</p>
+<pre><code class="language-toml [hl 9-11]"># https://editorconfig.org
+
+root = true
+
+[*]
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[Makefile]
+indent_style = tab
+indent_size = 4
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="setup.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
-                            <a rel="next" href="setup.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="ios-glue.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -190,8 +240,11 @@ benefits. And you can even stop there if you want to.</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="setup.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
-                    <a rel="next" href="setup.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="ios-glue.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

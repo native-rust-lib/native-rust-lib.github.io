@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Native Rust Library</title>
+        <title>Rust on Mobile</title>
         <meta name="robots" content="noindex" />
 
 
@@ -31,14 +31,22 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="css/highlighter.css">
 
+
+        <!-- Custom Elements -->
+        <script type="text/javascript" src="https://static.ghamza.dev/js/code-line-highlight.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Fira+Code" rel="stylesheet">
+        <style>
+            code {
+                font-family: 'Fira Code', sans-serif !important;
+            }
+        </style>
     </head>
     <body>
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -83,7 +91,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="setup.html"><strong aria-hidden="true">2.</strong> Setup</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> WASM Glue</div></li><li class="chapter-item expanded "><a href="ios-glue.html"><strong aria-hidden="true">4.</strong> iOS Glue</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Java Glue</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Android Glue</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> More Examples</div></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="setup.html"><strong aria-hidden="true">2.</strong> Setup</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="setup-makefile.html"><strong aria-hidden="true">2.1.</strong> Setup Makefile</a></li></ol></li><li class="chapter-item expanded "><a href="ios-glue.html"><strong aria-hidden="true">3.</strong> iOS Glue</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Android Glue</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> More Examples</div></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -97,18 +105,19 @@
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
                         </button>
-                        <button disabled id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
                             <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                         </ul>
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
                     </div>
 
-                    <h1 class="menu-title">Native Rust Library</h1>
+                    <h1 class="menu-title">Rust on Mobile</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -143,21 +152,47 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>Rust is a modern systems programming language focusing on safety, speed, and concurrency. It accomplishes these goals by being memory safe without using garbage collection.</p>
-<p>It's a popular choice for designing systems with high-performance requirements, such as gaming engines, databases, or operating systems, and it's an ideal choice for creating a common module for several platforms, including web, iOS, and Android.</p>
-<p>We will build a rust library in this series and port it to different platforms. We are calling it <code>libexa</code> (which stands for Example Library 🫣).</p>
+                        <h1 id="rust--on-mobile-"><a class="header" href="#rust--on-mobile-">Rust 🦀 on Mobile 📱</a></h1>
+<p>This small book describes how to use Rust and Mobile (android and iOS) together.</p>
+<h2 id="who-is-this-book-for"><a class="header" href="#who-is-this-book-for">Who is this book for?</a></h2>
+<p>This book is for anyone interested in compiling Rust to android or iOS for fast,
+reliable code on the mobile. You should know some Rust, and be familiar with
+Kotlin and Swift. You don't need to be an expert in any of them.</p>
+<h2 id="how-to-read-this-book"><a class="header" href="#how-to-read-this-book">How to read this book?</a></h2>
+<p>The book is written to be read from start to finish. You should follow
+along:writing, compiling, and running the tutorial's code yourself.</p>
+<p>We will build a rust library in this series and port it to different platforms.
+We are calling it <code>libexa</code> (which stands for Example Library 🫣).</p>
+<h2 id="low-level-control-with-high-level-ergonomics"><a class="header" href="#low-level-control-with-high-level-ergonomics">Low-Level Control with High-Level Ergonomics</a></h2>
+<p>Rust gives programmers low-level control and reliable performance. It is free
+from the non-deterministic garbage collection pauses that plague Kotlin/Swift.
+Programmers have control over indirection, monomorphization, and memory layout.</p>
+<h2 id="do-not-rewrite-everything"><a class="header" href="#do-not-rewrite-everything">Do <em>Not</em> Rewrite Everything</a></h2>
+<p>Existing code bases don't need to be thrown away. You can start by porting your
+most performance-sensitive Swift/Kotlin functions to Rust to gain immediate
+benefits. And you can even stop there if you want to.</p>
 <p>I strongly recommend <a href="https://www.rust-lang.org/tools/install">installing all of your Rust toolchains using rustup.</a></p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="setup"><a class="header" href="#setup">Setup</a></h1>
-<p>Let's get started and create our project. We will not use <code>cargo new --lib</code> yet; instead, we will make an empty directory and initialize git.</p>
+<blockquote>
+<p><em>The code of this tutorial is available on <a href="https://github.com/Ghamza-Jd/exa-lib">Ghamza-Jd/exa-lib</a></em></p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="setup-"><a class="header" href="#setup-">Setup 🏗️</a></h1>
+<h2 id="the-rust-toolchain"><a class="header" href="#the-rust-toolchain">The Rust Toolchain</a></h2>
+<p>You will need the standard Rust toolchain, including <code>rustup</code>, <code>rustc</code>, and <code>cargo</code>.</p>
+<p><a href="https://www.rust-lang.org/tools/install">Follow these instructions to install the Rust toolchain.</a></p>
+<h2 id="setting-up-the-project"><a class="header" href="#setting-up-the-project">Setting up the project</a></h2>
+<p>Let's get started and create our project. We will not use <code>cargo new --lib</code> yet;
+instead, we will make an empty directory and initialize git.</p>
 <pre><code class="language-bash">mkdir exa-lib
 cd exa-lib
 git init
 </code></pre>
 <blockquote>
-<p><em>We initialized git that early, so when we create a new rust library, it doesn’t come with a version control system; if you want to create a lib without <code>vcs</code>, add <code>--vcs none</code> to your <code>cargo new</code> command.</em></p>
+<p><strong>📄 Note:</strong> <em>We initialized git that early, so when we create a new rust library,
+it doesn’t come with a version control system; if you want to create a lib
+without <code>vcs</code>, add <code>--vcs none</code> to your <code>cargo new</code> command.</em></p>
 </blockquote>
-<p>Each rust project (yes, we will create multiple rust projects) will be a member of our <a href="https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html">cargo's workspace.</a></p>
+<p>Each rust project (yes, we will create multiple rust projects) will be a member
+of our <a href="https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html">cargo's workspace.</a></p>
 <pre><code class="language-bash">touch Cargo.toml
 </code></pre>
 <p>We can now build our core library, iOS and Android glues.</p>
@@ -166,8 +201,7 @@ cargo new --lib glue/android
 cargo new --lib glue/ios
 </code></pre>
 <p>The rust analyzer will go mad at us, so we should add them to our workspace.</p>
-<pre><code class="language-toml"># Cargo.toml
-[workspace]
+<pre><code class="language-toml">[workspace]
 members = [
     &quot;exa_core&quot;,
     &quot;glue/android&quot;,
@@ -191,7 +225,9 @@ Cargo.lock
 
 main.rs
 </code></pre>
-<p>We are ignoring the <code>.lock</code> file since we’re building a library. And I also like to ignore <code>main.rs</code> when building a library, so it acts as my playground for drafting rust code, and indeed we don’t want that to be saved in the repo.</p>
+<p>We are ignoring the <code>.lock</code> file since we’re building a library. And I also
+like to ignore <code>main.rs</code> when building a library, so it acts as my playground
+for drafting rust code, and indeed we don’t want that to be saved in the repo.</p>
 <p>And for our last file for this section, the <code>.editorconfig</code></p>
 <pre><code class="language-toml"># https://editorconfig.org
 
@@ -200,16 +236,13 @@ root = true
 [*]
 insert_final_newline = true
 trim_trailing_whitespace = true
-
-[Makefile]
-indent_style = tab
-indent_size = 4
 </code></pre>
 <blockquote>
-<p><em>Remember to install the <a href="https://editorconfig.org/">EditorConfig</a> extension on your text editor.</em></p>
+<p><strong>💡 Tip:</strong> <em>Install the <a href="https://editorconfig.org/">EditorConfig</a> extension
+on your text editor if it doesn't support it out of the box.</em></p>
 </blockquote>
-<p>To make sure our <code>Makefile</code> won't start nagging about missing separators.</p>
-<p>And we’re ending this chapter by adding a small function in <code>src/exa_core/lib.rs</code> to greet someone.</p>
+<p>And we’re ending this chapter by adding a small function in <code>src/exa_core/lib.rs</code>
+to greet someone.</p>
 <pre><code class="language-rust">pub fn greet(person: &amp;str) -&gt; String {
     format!(&quot;Hello, {person}&quot;)
 }
@@ -224,60 +257,115 @@ mod test {
         assert_eq!(result, &quot;Hello, World&quot;);
     }
 }</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="setup-makefile"><a class="header" href="#setup-makefile">Setup Makefile</a></h1>
+<p>In this section we are going to create <code>Makefile</code> that will contain our commands.</p>
+<pre><code class="language-bash">touch Makefile
+</code></pre>
+<p>We will start by adding android and iOS targets</p>
+<pre><code class="language-Makefile">ios_targets = aarch64-apple-ios \
+	x86_64-apple-ios \
+	aarch64-apple-ios-sim
+
+android_targets = armv7-linux-androideabi \
+	i686-linux-android \
+	aarch64-linux-android \
+	x86_64-linux-android
+</code></pre>
+<p>Now we can loop over those targets to do whatever we want, as a beginning we
+can add this targets to our tool chain under a setup command.</p>
+<pre><code class="language-Makefile [hl 10-18]">ios_targets = aarch64-apple-ios \
+	x86_64-apple-ios \
+	aarch64-apple-ios-sim
+
+android_targets = armv7-linux-androideabi \
+	i686-linux-android \
+	aarch64-linux-android \
+	x86_64-linux-android
+
+android-setup:
+	@for target in ${android_targets} ; do \
+        rustup target add $$target ; \
+    done
+
+ios-setup:
+	@for target in ${ios_targets} ; do \
+        rustup target add $$target ; \
+    done
+</code></pre>
+<p>For iOS we also want to install <code>cargo-lipo</code>, which automatically creates a
+universal library for use with your iOS application.</p>
+<pre><code class="language-Makefile [hl 7]">android-setup:
+	@for target in ${android_targets} ; do \
+        rustup target add $$target ; \
+    done
+
+ios-setup:
+	cargo install cargo-lipo
+
+	@for target in ${ios_targets} ; do \
+        rustup target add $$target ; \
+    done
+</code></pre>
+<p>Now to set our iOS and android from rust side we run simple</p>
+<pre><code class="language-bash">make ios-setup
+make android-setup
+</code></pre>
+<blockquote>
+<p><strong>📄 Note:</strong> <em>We should use hard tabs in our <code>Makefile</code>, spaces will result in
+&quot;missing separator&quot;</em></p>
+</blockquote>
+<p>To make sure we use hard tabs we can add this rule in our <code>.editorconfig</code>.</p>
+<pre><code class="language-toml [hl 9-11]"># https://editorconfig.org
+
+root = true
+
+[*]
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[Makefile]
+indent_style = tab
+indent_size = 4
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="ios-glue"><a class="header" href="#ios-glue">iOS Glue</a></h1>
-<ul>
-<li><a href="ios-glue.html#library-target">Library Target</a></li>
-<li><a href="ios-glue.html#dependencies">Dependencies</a></li>
-<li><a href="ios-glue.html#ios-glue-setup">iOS Glue Setup</a>
-<ul>
-<li><a href="ios-glue.html#build-file">Build File</a></li>
-<li><a href="ios-glue.html#errors">Errors</a></li>
-<li><a href="ios-glue.html#prelude">Prelude</a></li>
-<li><a href="ios-glue.html#ffi-helpers">FFI Helpers</a></li>
-<li><a href="ios-glue.html#glue">Glue</a></li>
-</ul>
-</li>
-<li><a href="ios-glue.html#building-the-project">Building the Project</a></li>
-<li><a href="ios-glue.html#using-the-library">Using the Library</a>
-<ul>
-<li><a href="ios-glue.html#adding-xcframework">Adding XCFramework</a></li>
-<li><a href="ios-glue.html#using-xcframework">Using XCFramework</a></li>
-</ul>
-</li>
-</ul>
-<p>Most of our work is going to be on <code>glue/ios</code></p>
 <h2 id="library-target"><a class="header" href="#library-target">Library Target</a></h2>
-<p>Inside <code>glue/ios/Cargo.toml</code> add the library target and make the crate type a static library</p>
-<pre><code class="language-toml {hl_lines=[&quot;6-8&quot;] linenostart=1}">[package]
+<p>Make the crate type a static library inside <code>glue/ios/Cargo.toml</code>.</p>
+<pre><code class="language-toml [hl 6-8]">[package]
 name = &quot;ios&quot;
 version = &quot;0.1.0&quot;
 edition = &quot;2021&quot;
+
 [lib]
 name = &quot;exa&quot;
 crate-type = [&quot;staticlib&quot;]
 </code></pre>
-<h2 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h2>
-<ul>
-<li><code>exa_core</code>; our core library</li>
-<li><code>libc</code>; provides all of the definitions necessary to easily interoperate with C code (or &quot;C-like&quot; code) on each of the platforms that Rust supports</li>
-<li><code>cbindgen</code> as build dependency; to generate our library header file.</li>
-</ul>
-<p>We want to export our library as C interfaces so that we can use C types and C functions directly from Swift. <a href="https://developer.apple.com/documentation/swift/c-interoperability">C interoperability with Swift</a>.</p>
-<p>Run</p>
-<pre><code class="language-shell"># From the project root directory
+<p>Now we want to install our dependencies:</p>
+<pre><code class="language-bash"># From the project root directory
 cargo add -p ios --path ./exa_core/
 cargo add -p ios libc
 cargo add -p ios --build cbindgen
 </code></pre>
-<h2 id="ios-glue-setup"><a class="header" href="#ios-glue-setup">iOS Glue Setup</a></h2>
-<h3 id="build-file"><a class="header" href="#build-file">Build File</a></h3>
-<p>Create <code>glue/ios/build.rs</code> and add to our bindings setup</p>
+<p>We want to export our library as C interfaces so that we can use C types and
+C functions directly from Swift (or objective-c). <a href="https://developer.apple.com/documentation/swift/c-interoperability">C interoperability with Swift</a>.</p>
+<blockquote>
+<ul>
+<li><em><code>exa_core</code>; our core library.</em></li>
+<li><em><code>libc</code>; provides all of the definitions necessary to easily interoperate
+with C code (or &quot;C-like&quot; code) on each of the platforms that Rust supports.</em></li>
+<li><em><code>cbindgen</code> as build dependency; to generate our library's header file.</em></li>
+</ul>
+</blockquote>
+<p>First we are going to use <code>cbindgen</code> to create a build script that runs on save,
+we want our header file to be modified on change rather than manually writing it
+down. So create <code>glue/ios/build.rs</code></p>
 <pre><code class="language-rust">extern crate cbindgen;
 use std::env;
 use cbindgen::Language::C;
+
 fn main() {
     setup_cbindgen();
 }
+
 fn setup_cbindgen() {
     let crate_dir = env::var(&quot;CARGO_MANIFEST_DIR&quot;);
     match crate_dir {
@@ -294,154 +382,13 @@ fn setup_cbindgen() {
         }
     }
 }</code></pre>
-<p>Whenever we have a non-mangeled (has <code>#[no_mangle]</code> attribute), public, exported C function in our <code>lib.rs</code> or declared as a module there, the fuction signature is going to be added to <code>glue/ios/include/exa_native.h</code> on save.</p>
-<p>Create <code>glue/ios/include/module.modulemap</code> and add the proper info to export the headers</p>
+<p>Now the header file <code>exa_native.h</code> is going to live in
+<code>glue/ios/include/exa_native.h</code>. For exporting it we will create <code>glue/ios/include/module.modulemap</code>.</p>
 <pre><code class="language-modulemap">module Exa {
     header &quot;exa_native.h&quot;
     export *
 }
 </code></pre>
-<h3 id="errors"><a class="header" href="#errors">Errors</a></h3>
-<p>Create <code>glue/ios/src/error.rs</code> that will contain our errors enum to be handled later on.</p>
-<pre><code class="language-rust">#[derive(Debug)]
-pub enum Error {
-    InvalidUtf8,
-    InvalidUint,
-}</code></pre>
-<h3 id="prelude"><a class="header" href="#prelude">Prelude</a></h3>
-<p>Prelude is going to be imported in most of the files, so we want to make it as minimal as possibile.</p>
-<p>Inside of it we're going to make a shortcut for the <code>Result</code> type.</p>
-<pre><code class="language-rust">pub use crate::error::Error;
-pub type Result&lt;T&gt; = core::result::Result&lt;T, Error&gt;;</code></pre>
-<p>Now we can add both of them to <code>glue/ios/src/lib.rs</code></p>
-<pre><code class="language-rust">mod error;
-mod prelude;</code></pre>
-<p>This pattern is considered an idiomatic way in rust for handling errors.</p>
-<h3 id="ffi-helpers"><a class="header" href="#ffi-helpers">FFI Helpers</a></h3>
-<p>FFI stands for foriegn function interface, we will add helpers for converting to and from C types</p>
-<p>Create <code>glue/ios/src/ffi_helpers.rs</code></p>
-<pre><code class="language-rust">use crate::prelude::*;
-use libc::c_char;
-use std::ffi::{CStr, CString};
-pub unsafe fn to_rust_str&lt;'a&gt;(raw_ptr: *const c_char) -&gt; Result&lt;&amp;'a str&gt; {
-    match CStr::from_ptr(raw_ptr).to_str() {
-        Ok(res) =&gt; Ok(res),
-        Err(_) =&gt; Err(Error::InvalidUtf8),
-    }
-}
-pub fn to_c_str(s: &amp;str) -&gt; Result&lt;*mut i8&gt; {
-    match CString::new(s) {
-        Ok(string) =&gt; Ok(string.into_raw()),
-        Err(_) =&gt; Err(Error::InvalidUint),
-    }
-}</code></pre>
-<p>And finally import <code>ffi_helpers.rs</code> inside <code>lib.rs</code></p>
-<pre><code class="language-rust">mod error;
-mod prelude;
-mod ffi_helpers;</code></pre>
-<h3 id="glue"><a class="header" href="#glue">Glue</a></h3>
-<p>For the gluing part, we want to import <code>libc</code> and <code>exa_core</code> and with the help of <code>ffi_helpers</code> we can convert back and forth between C and Rust types.</p>
-<pre><code class="language-rust {hl_lines=[&quot;5-19&quot;] linenostart=1}">mod error;
-mod ffi_helpers;
-mod prelude;
-use exa_core::greet;
-use libc::c_char;
-#[no_mangle]
-pub unsafe extern &quot;C&quot; fn greet_person(name: *const c_char) -&gt; *mut c_char {
-    let Ok(name) = ffi_helpers::to_rust_str(name) else {
-        panic!(&quot;Failed to convert to rust string slice&quot;);
-    };
-    let name = greet(name);
-    let Ok(name) = ffi_helpers::to_c_str(&amp;name) else {
-        panic!(&quot;Failed to convert to char array&quot;);
-    };
-    name
-}</code></pre>
-<p>The <code>#[no_mangle]</code> is an important part, so on build the function name is still the same.</p>
-<p>Now if you save, you should be able to see the <code>exa_native.h</code> has added a function.</p>
-<pre><code class="language-c">#include &lt;stdarg.h&gt;
-#include &lt;stdbool.h&gt;
-#include &lt;stdint.h&gt;
-#include &lt;stdlib.h&gt;
-char *greet_person(const char *name);
-</code></pre>
-<h2 id="building-the-project"><a class="header" href="#building-the-project">Building the Project</a></h2>
-<p>Add these commands to the <code>Makefile</code></p>
-<pre><code class="language-make {hl_lines=[&quot;4&quot;  &quot;18-41&quot;] linenostart=1}">ios_targets = aarch64-apple-ios x86_64-apple-ios aarch64-apple-ios-sim
-android_targets = armv7-linux-androideabi i686-linux-android aarch64-linux-android x86_64-linux-android
-lib_name = exa
-framework_name = Exa
-android-setup:
- @for target in ${android_targets} ; do \
-  rustup target add $$target ; \
- done
-ios-setup:
- cargo install cargo-lipo
- @for target in ${ios_targets} ; do \
-  rustup target add $$target ; \
- done
-ios: ios-clean ios-build ios-framework
-ios-build:
- @echo &quot;Building for iOS...&quot;
- @for target in ${ios_targets} ; do \
-  cargo build -p ios --release --target $$target ; \
- done
- @lipo -create \
-  target/x86_64-apple-ios/release/lib${lib_name}.a \
-  target/aarch64-apple-ios-sim/release/lib${lib_name}.a \
-  -output target/lib${lib_name}_sim.a
-ios-framework:
- @xcodebuild -create-xcframework \
-  -library target/lib${lib_name}_sim.a \
-  -headers glue/ios/include/ \
-  -library target/aarch64-apple-ios/release/lib${lib_name}.a \
-  -headers glue/ios/include/ \
-  -output target/${framework_name}.xcframework
-ios-clean:
- @cd target &amp;&amp; rm -rf ${framework_name}.xcframework
-</code></pre>
-<p><em><strong>Note:</strong> Please make sure to use tabs rather than spaces, if we use spaces Makefile will throw this error: <code>*** missing separator.  Stop.</code></em></p>
-<p>And now run <code>make ios</code></p>
-<p><code>ios-build</code> is going to loop over the ios targets that we specified, and build the project targeting them. Then using <code>lipo</code> we're going to create <code>.a</code> files</p>
-<p>And finally we want to bundle the <code>.a</code> files inside an <code>xcframework</code> so we can use it in our ios app.</p>
-<h2 id="using-the-library"><a class="header" href="#using-the-library">Using the Library</a></h2>
-<h3 id="adding-xcframework"><a class="header" href="#adding-xcframework">Adding XCFramework</a></h3>
-<p>Navigate to <code>Frameworks, Libraries, and Embedded Content</code></p>
-<p><img src="https://static.ghamza.dev/images/rust-for-mobile-part-2/navigate_to_framework.png" alt="1" /></p>
-<p>Choose <code>Add Other...</code> &gt; <code>Add Files...</code></p>
-<p><img src="https://static.ghamza.dev/images/rust-for-mobile-part-2/add_other_framework.png" alt="2" /></p>
-<p>Navigate to <code>Exa.xcframework</code> (under <code>target/</code>) and Click open</p>
-<p><img src="https://static.ghamza.dev/images/rust-for-mobile-part-2/choose_framework.png" alt="3" /></p>
-<h3 id="using-xcframework"><a class="header" href="#using-xcframework">Using XCFramework</a></h3>
-<p>We're going to import <code>Exa</code> and use <code>greet_person</code>, simple enough.</p>
-<pre><code class="language-swift">import SwiftUI
-import Exa
-struct ContentView: View {
-    var body: some View {
-        VStack {
-            Button(action: {
-                Exa.greet_person(&quot;Ghamza&quot;).map {
-                    print(String(cString: $0))
-                }
-            }) {
-                Text(&quot;Greet&quot;)
-            }
-        }
-        .padding()
-    }
-}
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
-</code></pre>
-<p>After using <code>Exa.greet_person</code> we're going to receive a C char pointer, so instead of unsafly unwrapping we use <code>.map</code>, if we have a valid result than we can unwrap it and print it on the console.</p>
-<p>Finally, after pressing <code>Greet</code> you should be able to see the log message in xcode's output console.</p>
-<hr />
-<blockquote>
-<p>You can find the code for this article on GitHub <a href="https://github.com/Ghamza-Jd/exa-lib/tree/part-2-ios-glue">Ghamza-Jd/exa-lib</a></p>
-</blockquote>
 
                     </main>
 
@@ -493,7 +440,6 @@ struct ContentView_Previews: PreviewProvider {
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
-        <script type="text/javascript" src="js/highlighter.js"></script>
 
         <script type="text/javascript">
         window.addEventListener('load', function() {

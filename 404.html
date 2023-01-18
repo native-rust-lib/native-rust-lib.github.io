@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Page not found - Native Rust Library</title>
+        <title>Page not found - Rust on Mobile</title>
         <base href="/">
 
 
@@ -31,14 +31,22 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="css/highlighter.css">
 
+
+        <!-- Custom Elements -->
+        <script type="text/javascript" src="https://static.ghamza.dev/js/code-line-highlight.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Fira+Code" rel="stylesheet">
+        <style>
+            code {
+                font-family: 'Fira Code', sans-serif !important;
+            }
+        </style>
     </head>
     <body>
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -83,7 +91,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="setup.html"><strong aria-hidden="true">2.</strong> Setup</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> WASM Glue</div></li><li class="chapter-item expanded "><a href="ios-glue.html"><strong aria-hidden="true">4.</strong> iOS Glue</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Java Glue</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Android Glue</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> More Examples</div></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="setup.html"><strong aria-hidden="true">2.</strong> Setup</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="setup-makefile.html"><strong aria-hidden="true">2.1.</strong> Setup Makefile</a></li></ol></li><li class="chapter-item expanded "><a href="ios-glue.html"><strong aria-hidden="true">3.</strong> iOS Glue</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Android Glue</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> More Examples</div></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -97,18 +105,19 @@
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
                         </button>
-                        <button disabled id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
                             <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                         </ul>
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
                     </div>
 
-                    <h1 class="menu-title">Native Rust Library</h1>
+                    <h1 class="menu-title">Rust on Mobile</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -196,7 +205,6 @@
         <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
-        <script type="text/javascript" src="js/highlighter.js"></script>
 
 
     </body>
