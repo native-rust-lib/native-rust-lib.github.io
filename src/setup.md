@@ -1,6 +1,15 @@
-# Setup
+# Setup 🏗️
 
-Let's get started and create our project. We will not use `cargo new --lib` yet; instead, we will make an empty directory and initialize git.
+## The Rust Toolchain
+
+You will need the standard Rust toolchain, including `rustup`, `rustc`, and `cargo`.
+
+[Follow these instructions to install the Rust toolchain.][1]
+
+## Setting up the project
+
+Let's get started and create our project. We will not use `cargo new --lib` yet;
+instead, we will make an empty directory and initialize git.
 
 ```bash
 mkdir exa-lib
@@ -8,9 +17,12 @@ cd exa-lib
 git init
 ```
 
-> *We initialized git that early, so when we create a new rust library, it doesn’t come with a version control system; if you want to create a lib without `vcs`, add `--vcs none` to your `cargo new` command.*
+> **📄 Note:** *We initialized git that early, so when we create a new rust library,
+> it doesn’t come with a version control system; if you want to create a lib
+> without `vcs`, add `--vcs none` to your `cargo new` command.*
 
-Each rust project (yes, we will create multiple rust projects) will be a member of our [cargo's workspace.](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html)
+Each rust project (yes, we will create multiple rust projects) will be a member
+of our [cargo's workspace.][2]
 
 ```bash
 touch Cargo.toml
@@ -27,7 +39,6 @@ cargo new --lib glue/ios
 The rust analyzer will go mad at us, so we should add them to our workspace.
 
 ```toml
-# Cargo.toml
 [workspace]
 members = [
     "exa_core",
@@ -56,7 +67,9 @@ Cargo.lock
 main.rs
 ```
 
-We are ignoring the `.lock` file since we’re building a library. And I also like to ignore `main.rs` when building a library, so it acts as my playground for drafting rust code, and indeed we don’t want that to be saved in the repo.
+We are ignoring the `.lock` file since we’re building a library. And I also
+like to ignore `main.rs` when building a library, so it acts as my playground
+for drafting rust code, and indeed we don’t want that to be saved in the repo.
 
 And for our last file for this section, the `.editorconfig`
 
@@ -68,17 +81,13 @@ root = true
 [*]
 insert_final_newline = true
 trim_trailing_whitespace = true
-
-[Makefile]
-indent_style = tab
-indent_size = 4
 ```
 
-> *Remember to install the [EditorConfig](https://editorconfig.org/) extension on your text editor.*
+> **💡 Tip:** *Install the [EditorConfig][3] extension
+> on your text editor if it doesn't support it out of the box.*
 
-To make sure our `Makefile` won't start nagging about missing separators.
-
-And we’re ending this chapter by adding a small function in `src/exa_core/lib.rs` to greet someone.
+And we’re ending this chapter by adding a small function in `src/exa_core/lib.rs`
+to greet someone.
 
 ```rust
 pub fn greet(person: &str) -> String {
@@ -96,3 +105,7 @@ mod test {
     }
 }
 ```
+
+[1]: https://www.rust-lang.org/tools/install
+[2]: https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html
+[3]: https://editorconfig.org/

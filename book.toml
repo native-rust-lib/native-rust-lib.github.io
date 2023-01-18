@@ -1,23 +1,18 @@
 [book]
 src = "src"
-title = "Native Rust Library"
+title = "Rust on Mobile"
 authors = ["Ghamza-Jd"]
 language = "en"
-multilingual = false
 description = "Building a Rust library and use it across platforms"
+multilingual = false
 
 [output.html]
 cname = "native-rust-lib.ghamza.dev"
 default-theme = "light"
-additional-js = ["js/highlighter.js"]
-additional-css = ["css/highlighter.css"]
 google-analytics = "G-M9GYS9Z1XC"
 git-repository-url = "https://github.com/ghamza-rust/ghamza-rust.github.io"
 git-repository-icon = "fa-github"
-preferred-dark-theme = "light"
+preferred-dark-theme = "navy"
 
 [output.html.playground]
 runnable = false
-
-[preprocessor.mark]
-command="mdbook-mark"

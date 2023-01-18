@@ -2,8 +2,7 @@
 
 - [Introduction](./introduction.md)
 - [Setup](./setup.md)
-- [WASM Glue]()
+  - [Setup Makefile](./setup-makefile.md)
 - [iOS Glue](./ios-glue.md)
-- [Java Glue]()
 - [Android Glue]()
 - [More Examples]()
