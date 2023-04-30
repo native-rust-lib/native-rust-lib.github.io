@@ -1,0 +1,282 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Setup - LibQuiz</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <script type="text/javascript">
+            var localAddrs = ["localhost", "127.0.0.1", ""];
+        
+            // Don't activate google analytics if running locally
+            if (localAddrs.indexOf(document.location.hostname) === -1) {
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        
+                ga('create', 'G-M9GYS9Z1XC', 'auto');
+                ga('send', 'pageview');
+            }
+        </script>
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="Building a trivia universal library in rust">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href=".././mdbook-admonish.css">
+
+
+        <!-- Custom Elements -->
+        <script type="text/javascript" src="https://static.ghamza.dev/js/code-line-highlight.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Fira+Code" rel="stylesheet">
+        <style>
+            code {
+                font-family: 'Fira Code', sans-serif !important;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../intro.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../arch.html"><strong aria-hidden="true">2.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="../core-lib/index.html"><strong aria-hidden="true">3.</strong> Core Library</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../core-lib/setup.html" class="active"><strong aria-hidden="true">3.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="../core-lib/logic.html"><strong aria-hidden="true">3.2.</strong> Library Core Logic</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">LibQuiz</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/ghamza-rust/ghamza-rust.github.io" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="setting-up-the-core"><a class="header" href="#setting-up-the-core">Setting up the Core</a></h1>
+<h2 id="cargo-workspace"><a class="header" href="#cargo-workspace">Cargo Workspace</a></h2>
+<p>We will create a new rust project and make it a workspace to cross-reference multiple crates inside our project.</p>
+<pre><code class="language-bash">cargo new quiz-library
+</code></pre>
+<p>Change the directory to <code>quiz-library</code> and delete the <code>src</code> folder.</p>
+<p>Finally, replace the content of <code>Cargo.toml</code> with our workspace configuration.</p>
+<pre><code class="language-toml">[workspace]
+members = []
+</code></pre>
+<h2 id="core-crate"><a class="header" href="#core-crate">Core Crate</a></h2>
+<p>We are going to add crates to our workspace as we go. The first crate is going
+to be our core crate.</p>
+<pre><code class="language-bash">cargo new quiz_core --lib --vcs none
+</code></pre>
+<blockquote>
+<p>We do not need a version control system on the new crates
+since it already created one when we ran <code>cargo new quiz-library</code>.</p>
+</blockquote>
+<p>Then add <code>quiz_core</code> to the root <code>Cargo.toml</code>.</p>
+<pre><code class="language-toml [hl 3]">[workspace]
+members = [
+    &quot;quiz_core&quot;
+]
+</code></pre>
+<p>The result of this part should have this folder structure:</p>
+<p><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXMtYXNjaWkiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgaGVpZ2h0PSIxMzdweCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSIgc3R5bGU9IndpZHRoOjEwOHB4O2hlaWdodDoxMzdweDtiYWNrZ3JvdW5kOiNGRkZGRkY7IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMDggMTM3IiB3aWR0aD0iMTA4cHgiIHpvb21BbmRQYW49Im1hZ25pZnkiPjxkZWZzLz48Zz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2OCIgeD0iMTYiIHk9IjE3LjEzODciPnF1aXotbGlicmFyeTwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI1NyIgeD0iMjYiIHk9IjMxLjEwNzQiPi5naXRpZ25vcmU8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNjQiIHg9IjI2IiB5PSI0NS4wNzYyIj5DYXJnby5sb2NrPC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjY1IiB4PSIyNiIgeT0iNTkuMDQ0OSI+Q2FyZ28udG9tbDwvdGV4dD48dGV4dCBmaWxsPSIjMzJDRDMyIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI1OSIgeD0iMjYiIHk9IjczLjAxMzciPnF1aXpfY29yZTwvdGV4dD48dGV4dCBmaWxsPSIjMzJDRDMyIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2NSIgeD0iMzYiIHk9Ijg2Ljk4MjQiPkNhcmdvLnRvbWw8L3RleHQ+PHRleHQgZmlsbD0iIzMyQ0QzMiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTkiIHg9IjM2IiB5PSIxMDAuOTUxMiI+c3JjPC90ZXh0Pjx0ZXh0IGZpbGw9IiMzMkNEMzIiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjI5IiB4PSI0NiIgeT0iMTE0LjkxOTkiPmxpYi5yczwvdGV4dD48dGV4dCBmaWxsPSIjQTlBOUE5IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI0MCIgeD0iMjYiIHk9IjEyOC44ODg3Ij50YXJnZXQvPC90ZXh0PjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB3aWR0aD0iMiIgeD0iOSIgeT0iMTEuOTg0NCIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjEwIiB4Mj0iMTAiIHkxPSIxNC45ODQ0IiB5Mj0iMjYuOTUzMSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjEwIiB4Mj0iMTgiIHkxPSIyNi45NTMxIiB5Mj0iMjYuOTUzMSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjEwIiB4Mj0iMTAiIHkxPSIxNC45ODQ0IiB5Mj0iNDAuOTIxOSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjEwIiB4Mj0iMTgiIHkxPSI0MC45MjE5IiB5Mj0iNDAuOTIxOSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjEwIiB4Mj0iMTAiIHkxPSIxNC45ODQ0IiB5Mj0iNTQuODkwNiIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjEwIiB4Mj0iMTgiIHkxPSI1NC44OTA2IiB5Mj0iNTQuODkwNiIvPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB3aWR0aD0iMiIgeD0iMTkiIHk9IjY3Ljg1OTQiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxMCIgeDI9IjEwIiB5MT0iMTQuOTg0NCIgeTI9IjY4Ljg1OTQiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxMCIgeDI9IjE4IiB5MT0iNjguODU5NCIgeTI9IjY4Ljg1OTQiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIyMCIgeDI9IjIwIiB5MT0iNzAuODU5NCIgeTI9IjgyLjgyODEiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIyMCIgeDI9IjI4IiB5MT0iODIuODI4MSIgeTI9IjgyLjgyODEiLz48cmVjdCBmaWxsPSJub25lIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgd2lkdGg9IjIiIHg9IjI5IiB5PSI5NS43OTY5Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMjAiIHgyPSIyMCIgeTE9IjcwLjg1OTQiIHkyPSI5Ni43OTY5Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMjAiIHgyPSIyOCIgeTE9Ijk2Ljc5NjkiIHkyPSI5Ni43OTY5Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMzAiIHgyPSIzMCIgeTE9Ijk4Ljc5NjkiIHkyPSIxMTAuNzY1NiIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjMwIiB4Mj0iMzgiIHkxPSIxMTAuNzY1NiIgeTI9IjExMC43NjU2Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMTAiIHgyPSIxMCIgeTE9IjE0Ljk4NDQiIHkyPSIxMjQuNzM0NCIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjEwIiB4Mj0iMTgiIHkxPSIxMjQuNzM0NCIgeTI9IjEyNC43MzQ0Ii8+PCEtLVNSQz1bVFAxMUptOTEzOE5seW9qd1gxMU1ISU02NjQ5NHIxMHM4SXZtRFNGa0U5YW1zc0F0WXE3MlZ0VHNLR3k4bEtvY3hzalZ5bVE1UTlQMlVyNHgxUTVzaV9nZmdXS1ZmVmpnVXhUYXBUa19UWXNyOEI5RWQ0TFlTd21DRExrQUZBTWhxdWZHeGUtTC12R3lTUy14dDVXczFsa0x6TGp3bEZyMGR5M0ZSM3hCNXZwLTB0X1c0dEk4OEVCWXBDc1B2Yk4wamxzR2YzTG9LTUR4akxTM1dyY1RoOWZ3WkpBRjl4MG5OM1gyazhld2J2dGhnQmlxZWN5UlNybVhWSUFhYkEtVERvMzFrQWFRcHpDOTU1SG9RWTFwWFIxUmJYQTZjc2dpRG5mVUl3b3U3Yklfbllua0daQndSUzg4RHV1OVN1RVluZWx1MEM0QklSOGNnVTdrSlZsMTJJSTZtcXNtWURNWlVUVWJicDJRS2tSR3pjMC1Vc2hWZ09iNk1zZVJaMG9nOEdLM3RXT2otR08wXS0tPjwvZz48L3N2Zz4=" alt="" /></p>
+<blockquote>
+<p><code>Cargo.lock</code> and <code>target</code> might be missing if the project wasn't built yet.</p>
+</blockquote>
+<h2 id="rust-client-crate"><a class="header" href="#rust-client-crate">Rust Client Crate</a></h2>
+<p>I like to separate the client from the library by using different crates. It is a small amount of work yet it makes our
+project future-proof. For example, adding a GUI dependency for our client.</p>
+<p>We will do the same as we did for the core crate. Create another crate and add it to the workspace.</p>
+<pre><code class="language-bash">cargo new apps/rust_client --bin --vcs none
+</code></pre>
+<pre><code class="language-toml [hl 4]">[workspace]
+members = [
+    &quot;quiz_core&quot;,
+    &quot;apps/rust_client&quot;
+]
+</code></pre>
+<p>Now we can test it by running:</p>
+<pre><code class="language-bash">cargo run --bin rust_client
+# Hello, world!
+</code></pre>
+<p>Sturcture:</p>
+<p><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXMtYXNjaWkiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgaGVpZ2h0PSIyMDdweCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSIgc3R5bGU9IndpZHRoOjExOHB4O2hlaWdodDoyMDdweDtiYWNrZ3JvdW5kOiNGRkZGRkY7IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMTggMjA3IiB3aWR0aD0iMTE4cHgiIHpvb21BbmRQYW49Im1hZ25pZnkiPjxkZWZzLz48Zz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2OCIgeD0iMTYiIHk9IjE3LjEzODciPnF1aXotbGlicmFyeTwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI1NyIgeD0iMjYiIHk9IjMxLjEwNzQiPi5naXRpZ25vcmU8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNjQiIHg9IjI2IiB5PSI0NS4wNzYyIj5DYXJnby5sb2NrPC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjY1IiB4PSIyNiIgeT0iNTkuMDQ0OSI+Q2FyZ28udG9tbDwvdGV4dD48dGV4dCBmaWxsPSIjMzJDRDMyIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIzMCIgeD0iMjYiIHk9IjczLjAxMzciPmFwcHM8L3RleHQ+PHRleHQgZmlsbD0iIzMyQ0QzMiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNjEiIHg9IjM2IiB5PSI4Ni45ODI0Ij5ydXN0X2NsaWVudDwvdGV4dD48dGV4dCBmaWxsPSIjMzJDRDMyIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2NSIgeD0iNDYiIHk9IjEwMC45NTEyIj5DYXJnby50b21sPC90ZXh0Pjx0ZXh0IGZpbGw9IiMzMkNEMzIiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE5IiB4PSI0NiIgeT0iMTE0LjkxOTkiPnNyYzwvdGV4dD48dGV4dCBmaWxsPSIjMzJDRDMyIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI0MyIgeD0iNTYiIHk9IjEyOC44ODg3Ij5tYWluLnJzPC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjU5IiB4PSIyNiIgeT0iMTQyLjg1NzQiPnF1aXpfY29yZTwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2NSIgeD0iMzYiIHk9IjE1Ni44MjYyIj5DYXJnby50b21sPC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE5IiB4PSIzNiIgeT0iMTcwLjc5NDkiPnNyYzwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIyOSIgeD0iNDYiIHk9IjE4NC43NjM3Ij5saWIucnM8L3RleHQ+PHRleHQgZmlsbD0iI0E5QTlBOSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNDAiIHg9IjI2IiB5PSIxOTguNzMyNCI+dGFyZ2V0LzwvdGV4dD48cmVjdCBmaWxsPSJub25lIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgd2lkdGg9IjIiIHg9IjkiIHk9IjExLjk4NDQiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxMCIgeDI9IjEwIiB5MT0iMTQuOTg0NCIgeTI9IjI2Ljk1MzEiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxMCIgeDI9IjE4IiB5MT0iMjYuOTUzMSIgeTI9IjI2Ljk1MzEiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxMCIgeDI9IjEwIiB5MT0iMTQuOTg0NCIgeTI9IjQwLjkyMTkiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxMCIgeDI9IjE4IiB5MT0iNDAuOTIxOSIgeTI9IjQwLjkyMTkiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxMCIgeDI9IjEwIiB5MT0iMTQuOTg0NCIgeTI9IjU0Ljg5MDYiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxMCIgeDI9IjE4IiB5MT0iNTQuODkwNiIgeTI9IjU0Ljg5MDYiLz48cmVjdCBmaWxsPSJub25lIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgd2lkdGg9IjIiIHg9IjE5IiB5PSI2Ny44NTk0Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMTAiIHgyPSIxMCIgeTE9IjE0Ljk4NDQiIHkyPSI2OC44NTk0Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMTAiIHgyPSIxOCIgeTE9IjY4Ljg1OTQiIHkyPSI2OC44NTk0Ii8+PHJlY3QgZmlsbD0ibm9uZSIgaGVpZ2h0PSIyIiBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHdpZHRoPSIyIiB4PSIyOSIgeT0iODEuODI4MSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjIwIiB4Mj0iMjAiIHkxPSI3MC44NTk0IiB5Mj0iODIuODI4MSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjIwIiB4Mj0iMjgiIHkxPSI4Mi44MjgxIiB5Mj0iODIuODI4MSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjMwIiB4Mj0iMzAiIHkxPSI4NC44MjgxIiB5Mj0iOTYuNzk2OSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjMwIiB4Mj0iMzgiIHkxPSI5Ni43OTY5IiB5Mj0iOTYuNzk2OSIvPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB3aWR0aD0iMiIgeD0iMzkiIHk9IjEwOS43NjU2Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMzAiIHgyPSIzMCIgeTE9Ijg0LjgyODEiIHkyPSIxMTAuNzY1NiIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjMwIiB4Mj0iMzgiIHkxPSIxMTAuNzY1NiIgeTI9IjExMC43NjU2Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iNDAiIHgyPSI0MCIgeTE9IjExMi43NjU2IiB5Mj0iMTI0LjczNDQiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSI0MCIgeDI9IjQ4IiB5MT0iMTI0LjczNDQiIHkyPSIxMjQuNzM0NCIvPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB3aWR0aD0iMiIgeD0iMTkiIHk9IjEzNy43MDMxIi8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMTAiIHgyPSIxMCIgeTE9IjE0Ljk4NDQiIHkyPSIxMzguNzAzMSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjEwIiB4Mj0iMTgiIHkxPSIxMzguNzAzMSIgeTI9IjEzOC43MDMxIi8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMjAiIHgyPSIyMCIgeTE9IjE0MC43MDMxIiB5Mj0iMTUyLjY3MTkiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIyMCIgeDI9IjI4IiB5MT0iMTUyLjY3MTkiIHkyPSIxNTIuNjcxOSIvPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB3aWR0aD0iMiIgeD0iMjkiIHk9IjE2NS42NDA2Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMjAiIHgyPSIyMCIgeTE9IjE0MC43MDMxIiB5Mj0iMTY2LjY0MDYiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIyMCIgeDI9IjI4IiB5MT0iMTY2LjY0MDYiIHkyPSIxNjYuNjQwNiIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjMwIiB4Mj0iMzAiIHkxPSIxNjguNjQwNiIgeTI9IjE4MC42MDk0Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMzAiIHgyPSIzOCIgeTE9IjE4MC42MDk0IiB5Mj0iMTgwLjYwOTQiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxMCIgeDI9IjEwIiB5MT0iMTQuOTg0NCIgeTI9IjE5NC41NzgxIi8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMTAiIHgyPSIxOCIgeTE9IjE5NC41NzgxIiB5Mj0iMTk0LjU3ODEiLz48IS0tU1JDPVtWUDlISnk4bTU4TlYtb2xrOHVHbTVQS09PV1dIS0tET0dYcG1JaWZNY3VRa2RSVHQ2Mkp5VHhpMTlpdjFOdmhzVjJWdHREdUU3NzRhbnBNbjdHRV9UaERvQXJPQkZkRnJ0VFBnWEhvdGx6VWJyODkwQWJCSU0xSExQU1hIc2EzUlU1c2xhNHJyTE5jQ2hSUk9xb2VMNGVLbVZQdmJ4V3pxMDZqOHAxcWpPd3M0ZU4tNmV3ZDZUSVJBUFBGM2s5Ty1FTWVpQUxTY0c1VmpqdFpQUExuemw1RUY1eThMeWhhT1BHOF9oZmZ3bnJtOW54TkZqVXR4Z0tqMUxvTXNQdGlzNDJPZlZtNlJRY3ZlN2F2Vzh6MGZRLTBjdzVudFJlRmtJWDJfUnlwRHNqV2wweDVEQ3dLNWFFLXFvSGdscW1hdWNzQ2k4NTZFS0Fyb3lrT2M2X0NEWF9WUzU1bUZZYkRaNVpPWDZmcWtPTUdzMmdyOVlfY0Q1LTQxV1pUQktNUWZYQmp0eElUNTQwZHFjTTBIaWNWbm1ORER0WGhSSDFkUFdfZGlmVnQwOWpwOGQ0alZJMVdzakJ1MFJocU1fRzAwXS0tPjwvZz48L3N2Zz4=" alt="" /></p>
+<p>We put the rust client inside an app folder because we will introduce other applications. For iOS, android, and web.</p>
+<p>Finally, we need to add and use the library inside the rust client crate we created.</p>
+<pre><code class="language-bash">cargo add -p rust_client --path quiz_core/
+</code></pre>
+<pre><code class="language-rust">// apps/rust_client/src/main.rs
+use quiz_core::add;
+
+fn main() {
+    println!(&quot;2 + 2 = {}&quot;, add(2, 2));
+}</code></pre>
+<p>Run again.</p>
+<pre><code class="language-bash">cargo run --bin rust_client
+# 2 + 2 = 4
+</code></pre>
+<p>The setup is done! Now we can focus on writing the actual library.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../core-lib/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next" href="../core-lib/logic.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../core-lib/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next" href="../core-lib/logic.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </body>
+</html>
