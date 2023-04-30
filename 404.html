@@ -3,14 +3,29 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Page not found - Rust on Mobile</title>
+        <title>Page not found - LibQuiz</title>
         <base href="/">
 
 
         <!-- Custom HTML head -->
         
+        <script type="text/javascript">
+            var localAddrs = ["localhost", "127.0.0.1", ""];
+        
+            // Don't activate google analytics if running locally
+            if (localAddrs.indexOf(document.location.hostname) === -1) {
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        
+                ga('create', 'G-M9GYS9Z1XC', 'auto');
+                ga('send', 'pageview');
+            }
+        </script>
+
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <meta name="description" content="Building a Rust library and use it across platforms">
+        <meta name="description" content="Building a trivia universal library in rust">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
@@ -31,6 +46,7 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="./mdbook-admonish.css">
 
 
         <!-- Custom Elements -->
@@ -91,7 +107,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="setup.html"><strong aria-hidden="true">2.</strong> Setup</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="setup-makefile.html"><strong aria-hidden="true">2.1.</strong> Setup Makefile</a></li></ol></li><li class="chapter-item expanded "><a href="ios-glue.html"><strong aria-hidden="true">3.</strong> iOS Glue</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Android Glue</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> More Examples</div></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="intro.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="arch.html"><strong aria-hidden="true">2.</strong> Architecture</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -117,7 +133,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">Rust on Mobile</h1>
+                    <h1 class="menu-title">LibQuiz</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -172,23 +188,6 @@
 
         </div>
 
-
-        <!-- Google Analytics Tag -->
-        <script type="text/javascript">
-            var localAddrs = ["localhost", "127.0.0.1", ""];
-
-            // make sure we don't activate google analytics if the developer is
-            // inspecting the book locally...
-            if (localAddrs.indexOf(document.location.hostname) === -1) {
-                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-                ga('create', 'G-M9GYS9Z1XC', 'auto');
-                ga('send', 'pageview');
-            }
-        </script>
 
 
         <script type="text/javascript">
