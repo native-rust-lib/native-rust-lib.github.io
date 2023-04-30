@@ -1,0 +1,2 @@
+[workspace]
+members = ["quiz_core", "apps/rust_client"]
