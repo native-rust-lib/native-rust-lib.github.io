@@ -1,0 +1,7 @@
+{
+  "no-hard-tabs": false,
+  "no-empty-links": true,
+  "line-length": {
+    "line_length": 120
+  }
+}
