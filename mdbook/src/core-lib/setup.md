@@ -8,9 +8,9 @@ We will create a new rust project and make it a workspace to cross-reference mul
 cargo new quiz-library
 ```
 
-Change the directory to `quiz-library` and delete the `src` folder
+Change the directory to `quiz-library` and delete the `src` folder.
 
-Finally, replace the content of `Cargo.toml` with our workspace configuration
+Finally, replace the content of `Cargo.toml` with our workspace configuration.
 
 ```toml
 [workspace]
@@ -62,10 +62,10 @@ The result of this part should have this folder structure:
 
 ## Rust Client Crate
 
-I like to separate the client from the library by using a different crates, it a small amount of work for making our
-project future proof. For example, adding a GUI dependency for our client.
+I like to separate the client from the library by using different crates. It is a small amount of work yet it makes our
+project future-proof. For example, adding a GUI dependency for our client.
 
-We're going to do the same as we did for the core crate. Create another crate and add it to the workspace.
+We will do the same as we did for the core crate. Create another crate and add it to the workspace.
 
 ```bash
 cargo new apps/rust_client --bin --vcs none
@@ -113,7 +113,7 @@ Sturcture:
 
 We put the rust client inside an app folder because we will introduce other applications. For iOS, android, and web.
 
-Finally, we need to add and use the library inside the rust client crated we created.
+Finally, we need to add and use the library inside the rust client crate we created.
 
 ```bash
 cargo add -p rust_client --path quiz_core/
@@ -135,4 +135,4 @@ cargo run --bin rust_client
 # 2 + 2 = 4
 ```
 
-Setup is done! now we can focus at writing the real library.
+The setup is done! Now we can focus on writing the actual library.

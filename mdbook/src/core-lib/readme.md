@@ -1,6 +1,4 @@
 # Core Library
 
-In this section we're going to write our core logic for our library. Our motivation is:
-make run in rust, then make it run everywhere.
-
-So let us make it run in rust!
+We will be developing the core logic for our library. We aim to create a program that works efficiently in
+Rust and can run on any platform. So, our first step is to make it work in Rust. Let's get started!
