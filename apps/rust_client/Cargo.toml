@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 quiz_core = { version = "0.1.0", path = "../../quiz_core" }
+tokio = { version = "1.28.0", features = ["rt", "macros", "rt-multi-thread"] }
