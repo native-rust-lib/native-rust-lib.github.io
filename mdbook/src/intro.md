@@ -20,7 +20,7 @@ Since the book contains every line of code needed for the implementation, the sn
 
 A snippet with all the bells and whistles looks like this:
 
-```toml [hl,6-8]
+```toml hl=[6-8] file=path/to/Cargo.toml
 [package]
 name = "mobile"
 version = "0.1.0"
@@ -33,8 +33,55 @@ crate-type = ["staticlib", "cdylib"]
 [dependencies]
 ```
 
-In the center,  you have the new code to add or modify. It may have a few faded out lines above and below to show where
-it goes in the exising surrouding code.
+In the center,  you have the new code to add or modify. It may have a few faded-out lines above and below to show where
+it goes in the surrounding code. At the bottom right, you have the path to the file we modified.
+
+### File System
+
+We will show the file system as a tree when we add or remove files and folders. Green indicates additions and red
+indicates removals.
+
+```plantuml,format=svg
+@startsalt
+{
+    {T
+        + quiz-library
+            ++ Cargo.toml
+            ++ <color:limegreen>quiz_core
+                +++ <color:limegreen>Cargo.toml
+                +++ <color:limegreen>src
+                    ++++ <color:limegreen>lib.rs
+    }
+}
+@endsalt
+```
+
+Creation of `quiz_core` lib.
+
+```plantuml,format=svg
+@startsalt
+{
+    {T
+        + quiz-library
+            ++ .gitignore
+            ++ Cargo.toml
+            ++ <color:red>quiz_core
+                +++ <color:red>Cargo.toml
+                +++ <color:red>src
+                    ++++ <color:red>lib.rs
+    }
+}
+@endsalt
+```
+
+Deletion of `quiz_core` lib.
+
+Some of the files and folders are omitted for brevity.
+
+### Notes
+
+> _**📄 Note:**
+> This is a note! It contains information that is supplementary to the main text._
 
 ## Low-Level Control with High-Level Ergonomics
 
