@@ -307,7 +307,7 @@ fn main() {
 <p>In this section, we will add the logic for our library and try running it in the Rust client crate.</p>
 <h2 id="api"><a class="header" href="#api">API</a></h2>
 <p>We will use the <a href="https://opentdb.com/">Open Trivia DB</a> APIs.</p>
-<h2 id="fetching-categories"><a class="header" href="#fetching-categories">Fetching Categories</a></h2>
+<h2 id="fetching-categories---blocking"><a class="header" href="#fetching-categories---blocking">Fetching Categories - Blocking</a></h2>
 <p>Fetching the categories is the easiest one between those APIs, a get request that requires no query params or anything.</p>
 <p>First, let us test it on our terminal.</p>
 <pre><code class="language-bash">curl 'https://opentdb.com/api_category.php'
@@ -392,8 +392,7 @@ struct CategoryResponse {
     trivia_categories: Vec&lt;Category&gt;,
 }</code></pre>
 <p>Now we can deserialize the request from JSON to our data structure.</p>
-<pre><code class="language-rust hl=[3 11 14] file=quiz_core/src/blocking.rs"> use reqwest::blocking::Client;
-
+<pre><code class="language-rust hl=[2 10 13] file=quiz_core/src/blocking.rs"> use reqwest::blocking::Client;
  use crate::dto::CategoryResponse;
 
  pub fn fetch_categories_blocking() {
@@ -423,6 +422,55 @@ struct CategoryResponse {
         },
 ...
 </code></pre>
+<h2 id="fetching-categories---async"><a class="header" href="#fetching-categories---async">Fetching Categories - Async</a></h2>
+<p>Now let's implement the async version of the same request.</p>
+<p>Create a file named <code>asynchronous.rs</code> inside the core library and declare it as a public module in <code>lib.rs</code>.</p>
+<p><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXMtYXNjaWkiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgaGVpZ2h0PSIyMDdweCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSIgc3R5bGU9IndpZHRoOjE1MnB4O2hlaWdodDoyMDdweDtiYWNrZ3JvdW5kOiNGRkZGRkY7IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxNTIgMjA3IiB3aWR0aD0iMTUycHgiIHpvb21BbmRQYW49Im1hZ25pZnkiPjxkZWZzLz48Zz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2OCIgeD0iMTYiIHk9IjE3LjEzODciPnF1aXotbGlicmFyeTwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2NSIgeD0iMjYiIHk9IjMxLjEwNzQiPkNhcmdvLnRvbWw8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMzAiIHg9IjI2IiB5PSI0NS4wNzYyIj5hcHBzPC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjYxIiB4PSIzNiIgeT0iNTkuMDQ0OSI+cnVzdF9jbGllbnQ8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNjUiIHg9IjQ2IiB5PSI3My4wMTM3Ij5DYXJnby50b21sPC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE5IiB4PSI0NiIgeT0iODYuOTgyNCI+c3JjPC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjQzIiB4PSI1NiIgeT0iMTAwLjk1MTIiPm1haW4ucnM8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTkiIHg9IjI2IiB5PSIxMTQuOTE5OSI+cXVpel9jb3JlPC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjY1IiB4PSIzNiIgeT0iMTI4Ljg4ODciPkNhcmdvLnRvbWw8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTkiIHg9IjM2IiB5PSIxNDIuODU3NCI+c3JjPC90ZXh0Pjx0ZXh0IGZpbGw9IiMzMkNEMzIiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9Ijk5IiB4PSI0NiIgeT0iMTU2LjgyNjIiPmFzeW5jaHJvbm91cy5yczwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2NiIgeD0iNDYiIHk9IjE3MC43OTQ5Ij5ibG9ja2luZy5yczwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIzNSIgeD0iNDYiIHk9IjE4NC43NjM3Ij5kdG8ucnM8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMjkiIHg9IjQ2IiB5PSIxOTguNzMyNCI+bGliLnJzPC90ZXh0PjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB3aWR0aD0iMiIgeD0iOSIgeT0iMTEuOTg0NCIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjEwIiB4Mj0iMTAiIHkxPSIxNC45ODQ0IiB5Mj0iMjYuOTUzMSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjEwIiB4Mj0iMTgiIHkxPSIyNi45NTMxIiB5Mj0iMjYuOTUzMSIvPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB3aWR0aD0iMiIgeD0iMTkiIHk9IjM5LjkyMTkiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxMCIgeDI9IjEwIiB5MT0iMTQuOTg0NCIgeTI9IjQwLjkyMTkiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxMCIgeDI9IjE4IiB5MT0iNDAuOTIxOSIgeTI9IjQwLjkyMTkiLz48cmVjdCBmaWxsPSJub25lIiBoZWlnaHQ9IjIiIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgd2lkdGg9IjIiIHg9IjI5IiB5PSI1My44OTA2Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMjAiIHgyPSIyMCIgeTE9IjQyLjkyMTkiIHkyPSI1NC44OTA2Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMjAiIHgyPSIyOCIgeTE9IjU0Ljg5MDYiIHkyPSI1NC44OTA2Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMzAiIHgyPSIzMCIgeTE9IjU2Ljg5MDYiIHkyPSI2OC44NTk0Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMzAiIHgyPSIzOCIgeTE9IjY4Ljg1OTQiIHkyPSI2OC44NTk0Ii8+PHJlY3QgZmlsbD0ibm9uZSIgaGVpZ2h0PSIyIiBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHdpZHRoPSIyIiB4PSIzOSIgeT0iODEuODI4MSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjMwIiB4Mj0iMzAiIHkxPSI1Ni44OTA2IiB5Mj0iODIuODI4MSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjMwIiB4Mj0iMzgiIHkxPSI4Mi44MjgxIiB5Mj0iODIuODI4MSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjQwIiB4Mj0iNDAiIHkxPSI4NC44MjgxIiB5Mj0iOTYuNzk2OSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjQwIiB4Mj0iNDgiIHkxPSI5Ni43OTY5IiB5Mj0iOTYuNzk2OSIvPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB3aWR0aD0iMiIgeD0iMTkiIHk9IjEwOS43NjU2Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMTAiIHgyPSIxMCIgeTE9IjE0Ljk4NDQiIHkyPSIxMTAuNzY1NiIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjEwIiB4Mj0iMTgiIHkxPSIxMTAuNzY1NiIgeTI9IjExMC43NjU2Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMjAiIHgyPSIyMCIgeTE9IjExMi43NjU2IiB5Mj0iMTI0LjczNDQiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIyMCIgeDI9IjI4IiB5MT0iMTI0LjczNDQiIHkyPSIxMjQuNzM0NCIvPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMiIgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB3aWR0aD0iMiIgeD0iMjkiIHk9IjEzNy43MDMxIi8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMjAiIHgyPSIyMCIgeTE9IjExMi43NjU2IiB5Mj0iMTM4LjcwMzEiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIyMCIgeDI9IjI4IiB5MT0iMTM4LjcwMzEiIHkyPSIxMzguNzAzMSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjMwIiB4Mj0iMzAiIHkxPSIxNDAuNzAzMSIgeTI9IjE1Mi42NzE5Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMzAiIHgyPSIzOCIgeTE9IjE1Mi42NzE5IiB5Mj0iMTUyLjY3MTkiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIzMCIgeDI9IjMwIiB5MT0iMTQwLjcwMzEiIHkyPSIxNjYuNjQwNiIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjMwIiB4Mj0iMzgiIHkxPSIxNjYuNjQwNiIgeTI9IjE2Ni42NDA2Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMzAiIHgyPSIzMCIgeTE9IjE0MC43MDMxIiB5Mj0iMTgwLjYwOTQiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiM4ODg4ODg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIzMCIgeDI9IjM4IiB5MT0iMTgwLjYwOTQiIHkyPSIxODAuNjA5NCIvPjxsaW5lIHN0eWxlPSJzdHJva2U6Izg4ODg4ODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjMwIiB4Mj0iMzAiIHkxPSIxNDAuNzAzMSIgeTI9IjE5NC41NzgxIi8+PGxpbmUgc3R5bGU9InN0cm9rZTojODg4ODg4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMzAiIHgyPSIzOCIgeTE9IjE5NC41NzgxIiB5Mj0iMTk0LjU3ODEiLz48IS0tU1JDPVtWTDVUSm04bjQ3cGxoelg3bzhNQmVaNjQ2NEQ0cjEwazhIeG1JZGd6VVpScVRoNFY2MkotVHRrN2M4MXUtejlxUGhPcHNuck9udXNwTjNrc09uMWdEd2tGZ1k5dXotZ3Blckxja0RkLW1aS0xtUDJSV2M5N2ZKdmItN2ZqWngwejdlN25yWXM1TFhCVDdfdjd5LSAteEhuZmhuNWRvODhZV3YwZlpPcS1aTEdDajFIYnZEYi0zVFBEaFJOV2hJOUZmUXJOQW1hWTlUem5rS1JtUEdsQnNEQ2JIUHdQOWgxR01aUUJTS0lDVmJkSldseldONnFaQ3d3TW9nVVJldmlhNERqOU9IR1lOU1ZVWVVuTnRDa2J1anBONzVUODdXZzFvaFJHNDVfQXRNVWpmRVc1QnRXVzlrUkJFZ0NveHFEbmNPeHhYeUVBbnFsTVhraExjSUhsSXFHNjQ0TXZLY0JnaWJablU5N2lIRjlEQnItSGd5U3JydnJ1dklBSzljTTJIaTBWdm9ocnNlTExHN2R3WTNfRlBPd1Y3OVhtQnB1alc5OTREQUhZT1JVM0lSbTAwXS0tPjwvZz48L3N2Zz4=" alt="" /></p>
+<pre><code class="language-rust hl=[1] file=quiz_core/src/lib.rs">pub mod asynchronous;
+pub mod blocking;
+pub mod dto;</code></pre>
+<p>Now lets add fetch categories request</p>
+<pre><code class="language-rust file=quiz_core/src/asynchronous.rs">use crate::dto::CategoryResponse;
+use reqwest::Client;
+
+pub async fn fetch_categories_async() {
+    let client = Client::new();
+    let res = client
+        .get(&quot;https://opentdb.com/api_category.php&quot;)
+        .send()
+        .await
+        .unwrap()
+        .json::&lt;CategoryResponse&gt;()
+        .await
+        .unwrap();
+
+    println!(&quot;{:#?}&quot;, res);
+}</code></pre>
+<blockquote>
+<p><em><strong>📄 Note:</strong> The .await instead of await keyword is a game changer in syntax verbosity. For example, the
+same code in JS or Swift will require us to have parenthesis if we want to have it on a single line.</em></p>
+<p>Example: <code>await (await client.get()).json()</code> so with every <code>await</code> you'll be one step closer to being LISP.</p>
+</blockquote>
+<p>Now before adding it to the client, we need an async runtime.</p>
+<p>Async in Rust is pretty interesting. When marking a function or a block as <code>async</code> we leave the concurrency to be handled
+by the runtime implementor. Runtime implementers can then use threads to handle concurrency or event loops if, for example,
+we're targeting a system with limited resources like embedded systems.</p>
+<p>We will use tokio's runtime for our client app.</p>
+<p>Install it with:</p>
+<pre><code class="language-bash">cargo add tokio --features rt macros rt-multi-thread
+</code></pre>
+<p>And finally, modify the client crate to use the async version.</p>
+<pre><code class="language-rust hl=[1 3 7-10] file=apps/rust_client/src/main.rs">use quiz_core::asynchronous::fetch_categories_async;
+use quiz_core::blocking::fetch_categories_blocking;
+use tokio::runtime::Runtime;
+
+fn main() {
+    fetch_categories_blocking();
+    let rt = Runtime::new().unwrap();
+    rt.block_on(async {
+        fetch_categories_async().await;
+    });
+}</code></pre>
 
                     </main>
 
