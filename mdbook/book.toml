@@ -7,7 +7,7 @@ title = "LibQuiz"
 description = "Building a trivia universal library in rust"
 
 [output.html]
-# cname = "native-rust-lib.ghamza.dev"
+cname = "native-rust-lib.ghamza.dev"
 default-theme = "light"
 git-repository-url = "https://github.com/ghamza-rust/ghamza-rust.github.io"
 git-repository-icon = "fa-github"
