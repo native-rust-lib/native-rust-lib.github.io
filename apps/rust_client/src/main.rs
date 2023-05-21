@@ -1,5 +1,5 @@
-use quiz_core::add;
+use quiz_core::blocking::fetch_categories_blocking;
 
 fn main() {
-    println!("2 + 2 = {}", add(2, 2));
+    fetch_categories_blocking();
 }
