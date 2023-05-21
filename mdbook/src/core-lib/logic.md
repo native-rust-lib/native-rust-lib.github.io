@@ -6,7 +6,7 @@ In this section, we will add the logic for our library and try running it in the
 
 We will use the [Open Trivia DB](https://opentdb.com/) APIs.
 
-## Fetching Categories
+## Fetching Categories - Blocking
 
 Fetching the categories is the easiest one between those APIs, a get request that requires no query params or anything.
 
@@ -207,9 +207,8 @@ struct CategoryResponse {
 
 Now we can deserialize the request from JSON to our data structure.
 
-```rust hl=[3,11,14] file=quiz_core/src/blocking.rs
+```rust hl=[2,10,13] file=quiz_core/src/blocking.rs
  use reqwest::blocking::Client;
-
  use crate::dto::CategoryResponse;
 
  pub fn fetch_categories_blocking() {
@@ -245,4 +244,95 @@ CategoryResponse {
             name: "Entertainment: Books",
         },
 ...
+```
+
+## Fetching Categories - Async
+
+Now let's implement the async version of the same request.
+
+Create a file named `asynchronous.rs` inside the core library and declare it as a public module in `lib.rs`.
+
+```plantuml,format=svg
+@startsalt
+{
+    {T
+        + quiz-library
+            ++ Cargo.toml
+            ++ apps
+                +++ rust_client
+                    ++++ Cargo.toml
+                    ++++ src
+                        +++++ main.rs
+            ++ quiz_core
+                +++ Cargo.toml
+                +++ src
+                    ++++ <color:limegreen>asynchronous.rs
+                    ++++ blocking.rs
+                    ++++ dto.rs
+                    ++++ lib.rs
+    }
+}
+@endsalt
+```
+
+```rust hl=[1] file=quiz_core/src/lib.rs
+pub mod asynchronous;
+pub mod blocking;
+pub mod dto;
+```
+
+Now lets add fetch categories request
+
+```rust file=quiz_core/src/asynchronous.rs
+use crate::dto::CategoryResponse;
+use reqwest::Client;
+
+pub async fn fetch_categories_async() {
+    let client = Client::new();
+    let res = client
+        .get("https://opentdb.com/api_category.php")
+        .send()
+        .await
+        .unwrap()
+        .json::<CategoryResponse>()
+        .await
+        .unwrap();
+
+    println!("{:#?}", res);
+}
+```
+
+> _**📄 Note:** The .await instead of await keyword is a game changer in syntax verbosity. For example, the
+> same code in JS or Swift will require us to have parenthesis if we want to have it on a single line._
+>
+> Example: `await (await client.get()).json()` so with every `await` you'll be one step closer to being LISP.
+
+Now before adding it to the client, we need an async runtime.
+
+Async in Rust is pretty interesting. When marking a function or a block as `async` we leave the concurrency to be handled
+by the runtime implementor. Runtime implementers can then use threads to handle concurrency or event loops if, for example,
+we're targeting a system with limited resources like embedded systems.
+
+We will use tokio's runtime for our client app.
+
+Install it with:
+
+```bash
+cargo add tokio --features rt macros rt-multi-thread
+```
+
+And finally, modify the client crate to use the async version.
+
+```rust hl=[1,3,7-10] file=apps/rust_client/src/main.rs
+use quiz_core::asynchronous::fetch_categories_async;
+use quiz_core::blocking::fetch_categories_blocking;
+use tokio::runtime::Runtime;
+
+fn main() {
+    fetch_categories_blocking();
+    let rt = Runtime::new().unwrap();
+    rt.block_on(async {
+        fetch_categories_async().await;
+    });
+}
 ```
