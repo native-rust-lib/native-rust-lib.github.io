@@ -336,3 +336,123 @@ fn main() {
     });
 }
 ```
+
+## Fetching Questions
+
+Fetching questions requires a little bit more effort since we need to pass query params.
+
+But first let us try and send a curl request,
+
+```bash
+curl 'https://opentdb.com/api.php?amount=1'
+```
+
+Now we want to create another stucture for the request. It will only contain the `amount` field.
+
+```rust hl=[6-14] file=quiz_core/src/dto.rs
+#[derive(Deserialize, Debug)]
+pub struct CategoryResponse {
+    trivia_categories: Vec<Category>,
+}
+
+#[derive(Serialize, Debug)]
+pub struct QuestionRequest {
+    amount: u32,
+}
+
+impl QuestionRequest {
+    pub fn new(amount: u32) -> Self {
+        Self { amount }
+    }
+}
+```
+
+We've made `QuestionRequest` serializable so we can convert it to a query string.
+
+> _**📄 Note:** As you can see we use `serde` for JSON and query string serialization. This is the power of `serde`,
+> being generic in seralization and deserialization and not being tied to a specific format._
+
+Then, we can add the get requests for the questions.
+
+```rust hl=[1,16,27] file=quiz_core/src/blocking.rs
+use crate::dto::{CategoryResponse, QuestionRequest};
+use reqwest::blocking::Client;
+
+pub fn fetch_categories_blocking() {
+    let client = Client::new();
+    let res = client
+        .get("https://opentdb.com/api_category.php")
+        .send()
+        .unwrap()
+        .json::<CategoryResponse>()
+        .unwrap();
+
+    println!("{:#?}", res);
+}
+
+pub fn fetch_questions_blocking(query_params: QuestionRequest) {
+    let client = Client::new();
+    let res = client
+        .get("https://opentdb.com/api.php")
+        .query(&query_params)
+        .send()
+        .unwrap()
+        .text()
+        .unwrap();
+
+    println!("{:#?}", res);
+}
+```
+
+```rust hl=[1,18-31] file=quiz_core/src/asynchronous.rs
+use crate::dto::{CategoryResponse, QuestionRequest};
+use reqwest::Client;
+
+pub async fn fetch_categories_async() {
+    let client = Client::new();
+    let res = client
+        .get("https://opentdb.com/api_category.php")
+        .send()
+        .await
+        .unwrap()
+        .json::<CategoryResponse>()
+        .await
+        .unwrap();
+
+    println!("{:#?}", res);
+}
+
+pub async fn fetch_questions_async(query_params: QuestionRequest) {
+    let client = Client::new();
+    let res = client
+        .get("https://opentdb.com/api.php")
+        .query(&query_params)
+        .send()
+        .await
+        .unwrap()
+        .text()
+        .await
+        .unwrap();
+
+    println!("{:#?}", res);
+}
+```
+
+Finally, we can use these functions inside our client crate:
+
+```rust hl=[1-3,8,12] file=apps/rust_client/src/main.rs
+use quiz_core::asynchronous::{fetch_categories_async, fetch_questions_async};
+use quiz_core::blocking::{fetch_categories_blocking, fetch_questions_blocking};
+use quiz_core::dto::QuestionRequest;
+use tokio::runtime::Runtime;
+
+fn main() {
+    fetch_categories_blocking();
+    fetch_questions_blocking(QuestionRequest::new(10));
+    let rt = Runtime::new().unwrap();
+    rt.block_on(async {
+        fetch_categories_async().await;
+        fetch_questions_async(QuestionRequest::new(10)).await;
+    });
+}
+```

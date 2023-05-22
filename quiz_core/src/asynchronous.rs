@@ -1,4 +1,4 @@
-use crate::dto::CategoryResponse;
+use crate::dto::{CategoryResponse, QuestionRequest};
 use reqwest::Client;
 
 pub async fn fetch_categories_async() {
@@ -9,6 +9,21 @@ pub async fn fetch_categories_async() {
         .await
         .unwrap()
         .json::<CategoryResponse>()
+        .await
+        .unwrap();
+
+    println!("{:#?}", res);
+}
+
+pub async fn fetch_questions_async(query_params: QuestionRequest) {
+    let client = Client::new();
+    let res = client
+        .get("https://opentdb.com/api.php")
+        .query(&query_params)
+        .send()
+        .await
+        .unwrap()
+        .text()
         .await
         .unwrap();
 
