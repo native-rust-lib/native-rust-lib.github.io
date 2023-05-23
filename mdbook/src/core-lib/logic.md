@@ -456,3 +456,149 @@ fn main() {
     });
 }
 ```
+
+## Parsing Questions
+
+Looking at the API response more closely we can notice that:
+
+- We have 2 types of questions, multiple choice and true or false.
+- Difficulty is either easy, medium or hard.
+
+```plantuml,format=svg
+@startjson
+{
+    "response_code": 0,
+    "results": [
+        {
+            "category": "Animals",
+            "type": "multiple",
+            "difficulty": "easy",
+            "question": "What do you call a baby bat?",
+            "correct_answer": "Pup",
+            "incorrect_answers": ["Cub","Chick","Kid"]
+        },
+        {
+            "category": "Entertainment: Video Games",
+            "type": "boolean",
+            "difficulty": "medium",
+            "question": "Nintendo started out as a playing card manufacturer.",
+            "correct_answer": "True",
+            "incorrect_answers": ["False"]
+        }
+    ]
+}
+@endjson
+```
+
+So again to parse that we need to define a similar structure of the above response.
+
+```rust hl=[7-100] file=quiz_core/src/dto.rs
+impl QuestionRequest {
+    pub fn new(amount: u32) -> Self {
+        Self { amount }
+    }
+}
+
+#[derive(Deserialize, Debug)]
+pub struct QuestionResponse {
+    pub response_code: u32,
+    pub results: Vec<Question>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct Question {
+    category: String,
+    #[serde(rename = "type")]
+    question_type: QuestionType,
+    difficulty: QuestionDifficulty,
+    question: String,
+    correct_answer: String,
+    incorrect_answers: Vec<String>,
+}
+
+#[derive(Deserialize, Debug)]
+pub enum QuestionType {
+    #[serde(rename = "multiple")]
+    Multiple,
+    #[serde(rename = "boolean")]
+    Boolean,
+}
+
+#[derive(Deserialize, Debug)]
+pub enum QuestionDifficulty {
+    #[serde(rename = "easy")]
+    Easy,
+    #[serde(rename = "medium")]
+    Medium,
+    #[serde(rename = "hard")]
+    Hard,
+}
+```
+
+Finally, parse the response as a JSON instead of text.
+
+```rust hl=[1,10,23] file=quiz_core/src/blocking.rs
+use crate::dto::{CategoryResponse, QuestionRequest, QuestionResponse};
+use reqwest::blocking::Client;
+
+pub fn fetch_categories_blocking() {
+    let client = Client::new();
+    let res = client
+        .get("https://opentdb.com/api_category.php")
+        .send()
+        .unwrap()
+        .json::<CategoryResponse>()
+        .unwrap();
+
+    println!("{:#?}", res);
+}
+
+pub fn fetch_questions_blocking(query_params: QuestionRequest) {
+    let client = Client::new();
+    let res = client
+        .get("https://opentdb.com/api.php")
+        .query(&query_params)
+        .send()
+        .unwrap()
+        .json::<QuestionResponse>()
+        .unwrap();
+
+    println!("{:#?}", res);
+}
+```
+
+```rust hl=[1,11,26] file=quiz_core/src/asynchronous.rs
+use crate::dto::{CategoryResponse, QuestionRequest, QuestionResponse};
+use reqwest::Client;
+
+pub async fn fetch_categories_async() {
+    let client = Client::new();
+    let res = client
+        .get("https://opentdb.com/api_category.php")
+        .send()
+        .await
+        .unwrap()
+        .json::<CategoryResponse>()
+        .await
+        .unwrap();
+
+    println!("{:#?}", res);
+}
+
+pub async fn fetch_questions_async(query_params: QuestionRequest) {
+    let client = Client::new();
+    let res = client
+        .get("https://opentdb.com/api.php")
+        .query(&query_params)
+        .send()
+        .await
+        .unwrap()
+        .json::<QuestionResponse>()
+        .await
+        .unwrap();
+
+    println!("{:#?}", res);
+}
+```
+
+Now when running the client the repsonse should be pertty.

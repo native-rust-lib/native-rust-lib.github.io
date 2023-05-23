@@ -1,4 +1,4 @@
-use crate::dto::{CategoryResponse, QuestionRequest};
+use crate::dto::{CategoryResponse, QuestionRequest, QuestionResponse};
 use reqwest::Client;
 
 pub async fn fetch_categories_async() {
@@ -23,7 +23,7 @@ pub async fn fetch_questions_async(query_params: QuestionRequest) {
         .send()
         .await
         .unwrap()
-        .text()
+        .json::<QuestionResponse>()
         .await
         .unwrap();
 

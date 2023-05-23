@@ -1,4 +1,4 @@
-use crate::dto::{CategoryResponse, QuestionRequest};
+use crate::dto::{CategoryResponse, QuestionRequest, QuestionResponse};
 use reqwest::blocking::Client;
 
 pub fn fetch_categories_blocking() {
@@ -20,7 +20,7 @@ pub fn fetch_questions_blocking(query_params: QuestionRequest) {
         .query(&query_params)
         .send()
         .unwrap()
-        .text()
+        .json::<QuestionResponse>()
         .unwrap();
 
     println!("{:#?}", res);

@@ -21,3 +21,38 @@ impl QuestionRequest {
         Self { amount }
     }
 }
+
+#[derive(Deserialize, Debug)]
+pub struct QuestionResponse {
+    pub response_code: u32,
+    pub results: Vec<Question>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct Question {
+    category: String,
+    #[serde(rename = "type")]
+    question_type: QuestionType,
+    difficulty: QuestionDifficulty,
+    question: String,
+    correct_answer: String,
+    incorrect_answers: Vec<String>,
+}
+
+#[derive(Deserialize, Debug)]
+pub enum QuestionType {
+    #[serde(rename = "multiple")]
+    Multiple,
+    #[serde(rename = "boolean")]
+    Boolean,
+}
+
+#[derive(Deserialize, Debug)]
+pub enum QuestionDifficulty {
+    #[serde(rename = "easy")]
+    Easy,
+    #[serde(rename = "medium")]
+    Medium,
+    #[serde(rename = "hard")]
+    Hard,
+}
