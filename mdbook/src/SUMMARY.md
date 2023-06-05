@@ -5,3 +5,5 @@
 - [Core Library](./core-lib/readme.md)
   - [Setup](./core-lib/setup.md)
   - [Library Core Logic](./core-lib/logic.md)
+- [Android](./android/readme.md)
+  - [Setup](./android/setup.md)
