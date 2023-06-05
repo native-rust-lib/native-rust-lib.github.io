@@ -336,3 +336,269 @@ fn main() {
     });
 }
 ```
+
+## Fetching Questions
+
+Fetching questions requires a little bit more effort since we need to pass query params.
+
+But first let us try and send a curl request,
+
+```bash
+curl 'https://opentdb.com/api.php?amount=1'
+```
+
+Now we want to create another stucture for the request. It will only contain the `amount` field.
+
+```rust hl=[6-14] file=quiz_core/src/dto.rs
+#[derive(Deserialize, Debug)]
+pub struct CategoryResponse {
+    trivia_categories: Vec<Category>,
+}
+
+#[derive(Serialize, Debug)]
+pub struct QuestionRequest {
+    amount: u32,
+}
+
+impl QuestionRequest {
+    pub fn new(amount: u32) -> Self {
+        Self { amount }
+    }
+}
+```
+
+We've made `QuestionRequest` serializable so we can convert it to a query string.
+
+> _**📄 Note:** As you can see we use `serde` for JSON and query string serialization. This is the power of `serde`,
+> being generic in seralization and deserialization and not being tied to a specific format._
+
+Then, we can add the get requests for the questions.
+
+```rust hl=[1,16,27] file=quiz_core/src/blocking.rs
+use crate::dto::{CategoryResponse, QuestionRequest};
+use reqwest::blocking::Client;
+
+pub fn fetch_categories_blocking() {
+    let client = Client::new();
+    let res = client
+        .get("https://opentdb.com/api_category.php")
+        .send()
+        .unwrap()
+        .json::<CategoryResponse>()
+        .unwrap();
+
+    println!("{:#?}", res);
+}
+
+pub fn fetch_questions_blocking(query_params: QuestionRequest) {
+    let client = Client::new();
+    let res = client
+        .get("https://opentdb.com/api.php")
+        .query(&query_params)
+        .send()
+        .unwrap()
+        .text()
+        .unwrap();
+
+    println!("{:#?}", res);
+}
+```
+
+```rust hl=[1,18-31] file=quiz_core/src/asynchronous.rs
+use crate::dto::{CategoryResponse, QuestionRequest};
+use reqwest::Client;
+
+pub async fn fetch_categories_async() {
+    let client = Client::new();
+    let res = client
+        .get("https://opentdb.com/api_category.php")
+        .send()
+        .await
+        .unwrap()
+        .json::<CategoryResponse>()
+        .await
+        .unwrap();
+
+    println!("{:#?}", res);
+}
+
+pub async fn fetch_questions_async(query_params: QuestionRequest) {
+    let client = Client::new();
+    let res = client
+        .get("https://opentdb.com/api.php")
+        .query(&query_params)
+        .send()
+        .await
+        .unwrap()
+        .text()
+        .await
+        .unwrap();
+
+    println!("{:#?}", res);
+}
+```
+
+Finally, we can use these functions inside our client crate:
+
+```rust hl=[1-3,8,12] file=apps/rust_client/src/main.rs
+use quiz_core::asynchronous::{fetch_categories_async, fetch_questions_async};
+use quiz_core::blocking::{fetch_categories_blocking, fetch_questions_blocking};
+use quiz_core::dto::QuestionRequest;
+use tokio::runtime::Runtime;
+
+fn main() {
+    fetch_categories_blocking();
+    fetch_questions_blocking(QuestionRequest::new(10));
+    let rt = Runtime::new().unwrap();
+    rt.block_on(async {
+        fetch_categories_async().await;
+        fetch_questions_async(QuestionRequest::new(10)).await;
+    });
+}
+```
+
+## Parsing Questions
+
+Looking at the API response more closely we can notice that:
+
+- We have 2 types of questions, multiple choice and true or false.
+- Difficulty is either easy, medium or hard.
+
+```plantuml,format=svg
+@startjson
+{
+    "response_code": 0,
+    "results": [
+        {
+            "category": "Animals",
+            "type": "multiple",
+            "difficulty": "easy",
+            "question": "What do you call a baby bat?",
+            "correct_answer": "Pup",
+            "incorrect_answers": ["Cub","Chick","Kid"]
+        },
+        {
+            "category": "Entertainment: Video Games",
+            "type": "boolean",
+            "difficulty": "medium",
+            "question": "Nintendo started out as a playing card manufacturer.",
+            "correct_answer": "True",
+            "incorrect_answers": ["False"]
+        }
+    ]
+}
+@endjson
+```
+
+So again to parse that we need to define a similar structure of the above response.
+
+```rust hl=[7-100] file=quiz_core/src/dto.rs
+impl QuestionRequest {
+    pub fn new(amount: u32) -> Self {
+        Self { amount }
+    }
+}
+
+#[derive(Deserialize, Debug)]
+pub struct QuestionResponse {
+    pub response_code: u32,
+    pub results: Vec<Question>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct Question {
+    category: String,
+    #[serde(rename = "type")]
+    question_type: QuestionType,
+    difficulty: QuestionDifficulty,
+    question: String,
+    correct_answer: String,
+    incorrect_answers: Vec<String>,
+}
+
+#[derive(Deserialize, Debug)]
+pub enum QuestionType {
+    #[serde(rename = "multiple")]
+    Multiple,
+    #[serde(rename = "boolean")]
+    Boolean,
+}
+
+#[derive(Deserialize, Debug)]
+pub enum QuestionDifficulty {
+    #[serde(rename = "easy")]
+    Easy,
+    #[serde(rename = "medium")]
+    Medium,
+    #[serde(rename = "hard")]
+    Hard,
+}
+```
+
+Finally, parse the response as a JSON instead of text.
+
+```rust hl=[1,10,23] file=quiz_core/src/blocking.rs
+use crate::dto::{CategoryResponse, QuestionRequest, QuestionResponse};
+use reqwest::blocking::Client;
+
+pub fn fetch_categories_blocking() {
+    let client = Client::new();
+    let res = client
+        .get("https://opentdb.com/api_category.php")
+        .send()
+        .unwrap()
+        .json::<CategoryResponse>()
+        .unwrap();
+
+    println!("{:#?}", res);
+}
+
+pub fn fetch_questions_blocking(query_params: QuestionRequest) {
+    let client = Client::new();
+    let res = client
+        .get("https://opentdb.com/api.php")
+        .query(&query_params)
+        .send()
+        .unwrap()
+        .json::<QuestionResponse>()
+        .unwrap();
+
+    println!("{:#?}", res);
+}
+```
+
+```rust hl=[1,11,26] file=quiz_core/src/asynchronous.rs
+use crate::dto::{CategoryResponse, QuestionRequest, QuestionResponse};
+use reqwest::Client;
+
+pub async fn fetch_categories_async() {
+    let client = Client::new();
+    let res = client
+        .get("https://opentdb.com/api_category.php")
+        .send()
+        .await
+        .unwrap()
+        .json::<CategoryResponse>()
+        .await
+        .unwrap();
+
+    println!("{:#?}", res);
+}
+
+pub async fn fetch_questions_async(query_params: QuestionRequest) {
+    let client = Client::new();
+    let res = client
+        .get("https://opentdb.com/api.php")
+        .query(&query_params)
+        .send()
+        .await
+        .unwrap()
+        .json::<QuestionResponse>()
+        .await
+        .unwrap();
+
+    println!("{:#?}", res);
+}
+```
+
+Now when running the client the repsonse should be pertty.
